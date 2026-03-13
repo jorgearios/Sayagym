@@ -3,7 +3,7 @@
 $host = 'localhost';
 $user = 'admin';
 $pass = 'e11a5294076c2dca0c0117243bb6dcff951d5cb5da79f0ca';
-$db = 'RepoSayagym';
+$db = 'sistema_gym';
 
 $conexion = new mysqli($host, $user, $pass, $db);
 
