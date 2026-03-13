@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <title>GYM RR | Sistema</title>
+    <title>Sayagym | Sistema</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -551,7 +551,7 @@
                 <i class="ti ti-stretching"></i>
             </div>
             <div class="brand-text">
-                <span class="brand-gym">GYM</span><span class="brand-rr">RR</span>
+                <span class="brand-gym">SAYA</span><span class="brand-rr">GYM</span>
             </div>
         </a>
 

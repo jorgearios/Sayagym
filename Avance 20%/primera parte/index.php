@@ -1,20 +1,22 @@
-<?php 
+<?php
+
 include 'config.php';
-include 'header.php'; 
+include 'header.php';
+
 
 $hoy = date('Y-m-d');
 
 // KPIs
-$total_socios       = $conexion->query("SELECT COUNT(*) as total FROM socios")->fetch_assoc()['total'];
-$activos            = $conexion->query("SELECT COUNT(*) as total FROM socios WHERE fecha_vencimiento >= '$hoy'")->fetch_assoc()['total'];
-$vencidos           = $conexion->query("SELECT COUNT(*) as total FROM socios WHERE fecha_vencimiento < '$hoy'")->fetch_assoc()['total'];
+$total_socios = $conexion->query("SELECT COUNT(*) as total FROM socios")->fetch_assoc()['total'];
+$activos = $conexion->query("SELECT COUNT(*) as total FROM socios WHERE fecha_vencimiento >= '$hoy'")->fetch_assoc()['total'];
+$vencidos = $conexion->query("SELECT COUNT(*) as total FROM socios WHERE fecha_vencimiento < '$hoy'")->fetch_assoc()['total'];
 $total_entrenadores = $conexion->query("SELECT COUNT(*) as total FROM entrenadores WHERE estado = 'activo'")->fetch_assoc()['total'];
 
 // Últimas inscripciones
 $recientes = $conexion->query("SELECT s.*, m.nombre as plan FROM socios s JOIN membresias m ON s.id_membresia = m.id_membresia ORDER BY s.id_socio DESC LIMIT 5");
 
 // Próximos a vencer (7 días)
-$limite    = date('Y-m-d', strtotime('+7 days'));
+$limite = date('Y-m-d', strtotime('+7 days'));
 $por_vencer = $conexion->query("SELECT nombre, apellido, fecha_vencimiento FROM socios WHERE fecha_vencimiento BETWEEN '$hoy' AND '$limite' ORDER BY fecha_vencimiento ASC LIMIT 5");
 ?>
 
@@ -105,7 +107,7 @@ $por_vencer = $conexion->query("SELECT nombre, apellido, fecha_vencimiento FROM 
     <div class="dash-hero">
       <div style="z-index:1;">
         <div class="hero-title">Panel de Control</div>
-        <div class="hero-sub">Bienvenida, Admin &mdash; Gimnasio RR</div>
+        <div class="hero-sub">Bienvenida, Admin &mdash; Sayagym</div>
         <div class="hero-date"><i class="ti ti-calendar me-1"></i><?php echo date('d \d\e F \d\e Y'); ?></div>
       </div>
       <div class="hero-actions">
@@ -158,17 +160,18 @@ $por_vencer = $conexion->query("SELECT nombre, apellido, fecha_vencimiento FROM 
           <table class="gym-table">
             <thead><tr><th>Socio</th><th>Plan</th><th>Registrado</th><th>Vence</th><th>Estado</th></tr></thead>
             <tbody>
-              <?php while($r = $recientes->fetch_assoc()):
-                $ev = strtotime($r['fecha_vencimiento']) < strtotime($hoy);
-              ?>
+              <?php while ($r = $recientes->fetch_assoc()):
+  $ev = strtotime($r['fecha_vencimiento']) < strtotime($hoy);
+?>
               <tr>
-                <td class="td-name"><?php echo $r['nombre']." ".$r['apellido']; ?></td>
+                <td class="td-name"><?php echo $r['nombre'] . " " . $r['apellido']; ?></td>
                 <td><span class="badge badge-blue"><?php echo $r['plan']; ?></span></td>
                 <td class="td-muted"><?php echo date('d/m/Y', strtotime($r['fecha_registro'])); ?></td>
                 <td class="td-muted"><?php echo date('d/m/Y', strtotime($r['fecha_vencimiento'])); ?></td>
-                <td><span class="badge <?php echo $ev ? 'badge-red':'badge-green'; ?>"><?php echo $ev ? 'VENCIDO':'ACTIVO'; ?></span></td>
+                <td><span class="badge <?php echo $ev ? 'badge-red' : 'badge-green'; ?>"><?php echo $ev ? 'VENCIDO' : 'ACTIVO'; ?></span></td>
               </tr>
-              <?php endwhile; ?>
+              <?php
+endwhile; ?>
             </tbody>
           </table>
         </div>
@@ -182,27 +185,32 @@ $por_vencer = $conexion->query("SELECT nombre, apellido, fecha_vencimiento FROM 
           </span>
         </div>
         <?php
-        $rows_vencer = [];
-        while($pv = $por_vencer->fetch_assoc()) $rows_vencer[] = $pv;
-        if(count($rows_vencer) === 0): ?>
+$rows_vencer = [];
+while ($pv = $por_vencer->fetch_assoc())
+  $rows_vencer[] = $pv;
+if (count($rows_vencer) === 0): ?>
         <div style="padding:44px 24px; text-align:center;">
           <i class="ti ti-circle-check" style="font-size:2.5rem; color:var(--green); display:block; margin-bottom:10px;"></i>
           <div style="font-weight:600; color:var(--text);">¡Todo en orden!</div>
           <div style="font-size:0.85rem; color:var(--muted); margin-top:4px;">Sin membresías próximas a vencer.</div>
         </div>
-        <?php else: foreach($rows_vencer as $pv):
-          $dias = (int)((strtotime($pv['fecha_vencimiento']) - strtotime($hoy)) / 86400);
-        ?>
+        <?php
+else:
+  foreach ($rows_vencer as $pv):
+    $dias = (int)((strtotime($pv['fecha_vencimiento']) - strtotime($hoy)) / 86400);
+?>
         <div class="alert-row">
           <div>
-            <div class="alert-name"><?php echo $pv['nombre']." ".$pv['apellido']; ?></div>
+            <div class="alert-name"><?php echo $pv['nombre'] . " " . $pv['apellido']; ?></div>
             <div class="alert-sub">Vence el <?php echo date('d/m/Y', strtotime($pv['fecha_vencimiento'])); ?></div>
           </div>
-          <span class="badge <?php echo $dias <= 2 ? 'badge-red':'badge-gold'; ?>">
-            <?php echo $dias === 0 ? 'Hoy' : "en $dias día".($dias>1?'s':''); ?>
+          <span class="badge <?php echo $dias <= 2 ? 'badge-red' : 'badge-gold'; ?>">
+            <?php echo $dias === 0 ? 'Hoy' : "en $dias día" . ($dias > 1 ? 's' : ''); ?>
           </span>
         </div>
-        <?php endforeach; endif; ?>
+        <?php
+  endforeach;
+endif; ?>
       </div>
 
     </div>
