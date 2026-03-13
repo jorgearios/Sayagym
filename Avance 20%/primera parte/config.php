@@ -1,12 +1,9 @@
 <?php
-// -------------------------------------------------------
-//  Configuración de conexión — XAMPP (entorno local)
-//  Usuario por defecto de XAMPP: root / sin contraseña
-// -------------------------------------------------------
+
 $host = 'localhost';
-$user = 'root';       // Usuario por defecto en XAMPP
-$pass = '';           // XAMPP no tiene contraseña por defecto
-$db   = 'sistema_gym';
+$user = 'admin';
+$pass = 'e11a5294076c2dca0c0117243bb6dcff951d5cb5da79f0ca';
+$db = 'RepoSayagym';
 
 $conexion = new mysqli($host, $user, $pass, $db);
 
