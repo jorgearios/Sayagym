@@ -2,8 +2,10 @@
 include 'config.php';
 include 'header.php'; 
 
+$socio = null;
+
 if (isset($_GET['id'])) {
-    $id = $_GET['id'];
+    $id = (int)$_GET['id'];
     $resultado = $conexion->query("SELECT * FROM socios WHERE id_socio = $id");
     $socio = $resultado->fetch_assoc();
     if (!$socio) {
@@ -12,31 +14,40 @@ if (isset($_GET['id'])) {
     }
 }
 
+if (!$socio && !$_POST) {
+    echo "<script>window.location='socios.php';</script>";
+    exit;
+}
+
 if ($_POST) {
-    $id = $_POST['id_socio'];
-    $nom = $_POST['nombre'];
-    $ape = $_POST['apellido'];
-    $tel = $_POST['telefono'];
-    $tel_emergencia = $_POST['contacto_emergencia'];
-    $cor = $_POST['correo'];
-    $dir = $_POST['direccion'];
-    $f_nac = $_POST['fecha_nacimiento'];
-    $mem_id = $_POST['id_membresia'];
-    $ent_id = ($_POST['id_entrenador'] == "") ? "NULL" : $_POST['id_entrenador'];
-    $est = $_POST['estado'];
+    $id = (int)$_POST['id_socio'];
+    $nom = $conexion->real_escape_string($_POST['nombre']);
+    $ape = $conexion->real_escape_string($_POST['apellido']);
+    $tel = $conexion->real_escape_string($_POST['telefono']);
+    $tel_emergencia = $conexion->real_escape_string($_POST['contacto_emergencia']);
+    $cor = $conexion->real_escape_string($_POST['correo']);
+    $dir = $conexion->real_escape_string($_POST['direccion']);
+    $f_nac = $conexion->real_escape_string($_POST['fecha_nacimiento']);
+    $mem_id = (int)$_POST['id_membresia'];
+    $ent_id = (!empty($_POST['id_entrenador'])) ? (int)$_POST['id_entrenador'] : "NULL";
+    $est = $conexion->real_escape_string($_POST['estado']);
 
     $sql = "UPDATE socios SET 
             nombre = '$nom', apellido = '$ape', telefono = '$tel', 
             contacto_emergencia = '$tel_emergencia', correo = '$cor', 
             direccion = '$dir', fecha_nacimiento = '$f_nac', 
-            id_membresia = '$mem_id', id_entrenador = $ent_id, estado = '$est'
+            id_membresia = $mem_id, id_entrenador = $ent_id, estado = '$est'
             WHERE id_socio = $id";
     
     if ($conexion->query($sql)) {
         echo "<script>window.location='socios.php?res=editado';</script>";
+        exit;
     } else {
         echo "<div class='alert alert-danger'>Error: " . $conexion->error . "</div>";
     }
+
+    $resultado = $conexion->query("SELECT * FROM socios WHERE id_socio = $id");
+    $socio = $resultado->fetch_assoc();
 }
 
 $query_entrenadores = "SELECT id_entrenador, nombre FROM entrenadores ORDER BY nombre ASC";
@@ -49,7 +60,7 @@ $resultado_entrenadores = $conexion->query($query_entrenadores);
     <form method="POST" class="card" style="max-width:860px; margin:0 auto;">
       <div class="card-header gold">
         <span class="card-title">
-          <i class="ti ti-edit me-2"></i>Editar Socio #<?php echo $socio['id_socio']; ?> — <?php echo $socio['nombre'].' '.$socio['apellido']; ?>
+          <i class="ti ti-edit me-2"></i>Editar Socio #<?php echo $socio['id_socio']; ?> — <?php echo htmlspecialchars($socio['nombre'].' '.$socio['apellido']); ?>
         </span>
       </div>
       <div class="card-body">
@@ -58,23 +69,23 @@ $resultado_entrenadores = $conexion->query($query_entrenadores);
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
           <div>
             <label class="form-label">Nombre(s)</label>
-            <input type="text" name="nombre" class="form-control" value="<?php echo $socio['nombre']; ?>" required>
+            <input type="text" name="nombre" class="form-control" value="<?php echo htmlspecialchars($socio['nombre']); ?>" required>
           </div>
           <div>
             <label class="form-label">Apellido(s)</label>
-            <input type="text" name="apellido" class="form-control" value="<?php echo $socio['apellido']; ?>" required>
+            <input type="text" name="apellido" class="form-control" value="<?php echo htmlspecialchars($socio['apellido']); ?>" required>
           </div>
           <div>
             <label class="form-label">Teléfono</label>
-            <input type="text" name="telefono" class="form-control" value="<?php echo $socio['telefono']; ?>">
+            <input type="text" name="telefono" class="form-control" value="<?php echo htmlspecialchars($socio['telefono']); ?>">
           </div>
           <div>
             <label class="form-label">Contacto de Emergencia</label>
-            <input type="text" name="contacto_emergencia" class="form-control" value="<?php echo $socio['contacto_emergencia']; ?>">
+            <input type="text" name="contacto_emergencia" class="form-control" value="<?php echo htmlspecialchars($socio['contacto_emergencia']); ?>">
           </div>
           <div>
             <label class="form-label">Correo</label>
-            <input type="email" name="correo" class="form-control" value="<?php echo $socio['correo']; ?>">
+            <input type="email" name="correo" class="form-control" value="<?php echo htmlspecialchars($socio['correo']); ?>">
           </div>
           <div>
             <label class="form-label">Fecha de Nacimiento</label>
@@ -82,7 +93,7 @@ $resultado_entrenadores = $conexion->query($query_entrenadores);
           </div>
           <div style="grid-column:1/-1;">
             <label class="form-label">Dirección</label>
-            <input type="text" name="direccion" class="form-control" value="<?php echo $socio['direccion']; ?>">
+            <input type="text" name="direccion" class="form-control" value="<?php echo htmlspecialchars($socio['direccion']); ?>">
           </div>
         </div>
 
@@ -105,9 +116,9 @@ $resultado_entrenadores = $conexion->query($query_entrenadores);
             <label class="form-label">Entrenador Asignado</label>
             <select name="id_entrenador" class="form-select">
               <option value="">-- Sin Entrenador --</option>
-              <?php while($e = $resultado_entrenadores->fetch_assoc()): ?>
-                <option value="<?php echo $e['id_entrenador']; ?>" <?php echo ($e['id_entrenador'] == $socio['id_entrenador']) ? 'selected' : ''; ?>>
-                  <?php echo $e['nombre']; ?>
+              <?php while($ent = $resultado_entrenadores->fetch_assoc()): ?>
+                <option value="<?php echo $ent['id_entrenador']; ?>" <?php echo ($ent['id_entrenador'] == $socio['id_entrenador']) ? 'selected' : ''; ?>>
+                  <?php echo htmlspecialchars($ent['nombre']); ?>
                 </option>
               <?php endwhile; ?>
             </select>

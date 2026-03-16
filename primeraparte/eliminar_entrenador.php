@@ -2,8 +2,7 @@
 include 'config.php';
 
 if (isset($_GET['id'])) {
-    $id = $_GET['id'];
-    
+    $id = (int)$_GET['id'];
     $sql = "DELETE FROM entrenadores WHERE id_entrenador = $id";
     
     if ($conexion->query($sql)) {
@@ -11,5 +10,7 @@ if (isset($_GET['id'])) {
     } else {
         echo "Error al eliminar: " . $conexion->error;
     }
+} else {
+    header("Location: entrenadores.php");
 }
-?>
+exit;
