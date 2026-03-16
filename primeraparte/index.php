@@ -107,7 +107,7 @@ $por_vencer = $conexion->query("SELECT nombre, apellido, fecha_vencimiento FROM 
     <div class="dash-hero">
       <div style="z-index:1;">
         <div class="hero-title">Panel de Control</div>
-        <div class="hero-sub">Bienvenida, Admin &mdash; SayaGYM</div>
+        <div class="hero-sub">Bienvenida, Admin &mdash; Sayagym</div>
         <div class="hero-date"><i class="ti ti-calendar me-1"></i><?php echo date('d \d\e F \d\e Y'); ?></div>
       </div>
       <div class="hero-actions">

@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <title>SayaGYM | Sistema</title>
+    <title>Sayagym | Sistema</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -548,9 +548,10 @@
         <!-- Logo Badge -->
         <a href="index.php" class="gym-brand-badge">
             <div class="brand-circle">
+                <i class="ti ti-stretching"></i>
             </div>
             <div class="brand-text">
-                <span class="brand-gym">Saya</span><span class="brand-rr">GYM</span>
+                <span class="brand-gym">SAYA</span><span class="brand-rr">GYM</span>
             </div>
         </a>
 
