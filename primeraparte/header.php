@@ -65,36 +65,24 @@
         .gym-brand-badge {
             display: flex;
             align-items: center;
-            gap: 10px;
             text-decoration: none;
             margin-right: 16px;
             flex-shrink: 0;
         }
-        .brand-circle {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.15);
-            border: 2px solid rgba(255,255,255,0.3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.1rem;
-            color: var(--gold);
-            transition: background 0.2s;
+        .gym-logo-img {
+            height: 44px;
+            width: auto;
+            object-fit: contain;
+            background: #ffffff;
+            padding: 4px 8px;
+            border-radius: var(--radius);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
-        .gym-brand-badge:hover .brand-circle {
-            background: rgba(255,255,255,0.25);
+        .gym-brand-badge:hover .gym-logo-img {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.25);
         }
-        .brand-text {
-            font-family: 'Oswald', sans-serif;
-            font-size: 1.25rem;
-            font-weight: 700;
-            letter-spacing: 2px;
-            line-height: 1;
-        }
-        .brand-gym { color: #fff; }
-        .brand-rr  { color: var(--gold); }
 
         /* Nav links */
         .gym-nav {
@@ -547,12 +535,7 @@
 
         <!-- Logo Badge -->
         <a href="index.php" class="gym-brand-badge">
-            <div class="brand-circle">
-                <i class="ti ti-stretching"></i>
-            </div>
-            <div class="brand-text">
-                <span class="brand-gym">SAYA</span><span class="brand-rr">GYM</span>
-            </div>
+            <img src="../Sayagym%20logo.png" alt="Sayagym Logo" class="gym-logo-img">
         </a>
 
         <!-- Nav Items -->
