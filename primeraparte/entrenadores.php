@@ -25,6 +25,12 @@ include 'header.php';
     <?php endif; ?>
 
     <div class="card">
+      <div class="card-header gray">
+        <h3 class="card-title">Listado de Entrenadores</h3>
+      </div>
+      <div class="card-body p-0" style="display: none;">
+        <!-- Estructura Tabler: Aquí irían los filtros o búsqueda -->
+      </div>
       <div class="table-responsive">
         <table class="gym-table">
           <thead>
@@ -78,6 +84,9 @@ include 'header.php';
             <?php endwhile; ?>
           </tbody>
         </table>
+      </div>
+      <div class="card-footer d-flex align-items-center">
+        <p class="m-0 text-muted small">Mostrando todos los registros</p>
       </div>
     </div>
   </div>
