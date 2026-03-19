@@ -1,316 +1,606 @@
--- =============================================================
---  GYM RR — Base de Datos del Sistema de Gestión
---  Base de datos : sistema_gym
---  Servidor      : MySQL 8.0 / MariaDB
---  Versión       : 2026
---  Descripción   : Estructura completa con datos de prueba.
--- =============================================================
+-- phpMyAdmin SQL Dump
+-- version 5.2.1
+-- https://www.phpmyadmin.net/
+--
+-- Servidor: 127.0.0.1
+-- Tiempo de generación: 19-03-2026 a las 06:22:54
+-- Versión del servidor: 10.4.32-MariaDB
+-- Versión de PHP: 8.0.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET time_zone = "+00:00";
-SET NAMES utf8mb4;
 START TRANSACTION;
+SET time_zone = "+00:00";
 
--- -------------------------------------------------------------
--- Crear y seleccionar la base de datos
--- -------------------------------------------------------------
-CREATE DATABASE IF NOT EXISTS `sistema_gym`
-  CHARACTER SET utf8mb4
-  COLLATE utf8mb4_unicode_ci;
 
-USE `sistema_gym`;
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
 
--- =============================================================
---  TABLAS PRINCIPALES
--- =============================================================
+--
+-- Base de datos: `sistema_gym`
+--
 
--- -------------------------------------------------------------
---  USUARIOS  (acceso al sistema: Admin / Recepcionista / Entrenador)
--- -------------------------------------------------------------
-CREATE TABLE `usuarios` (
-  `id_usuario`      INT          NOT NULL AUTO_INCREMENT,
-  `nombre_completo` VARCHAR(150) NOT NULL,
-  `usuario`         VARCHAR(50)  NOT NULL,
-  `password`        VARCHAR(255) NOT NULL,
-  `rol`             ENUM('Administrador','Recepcionista','Entrenador') DEFAULT 'Recepcionista',
-  `estado`          ENUM('activo','inactivo') DEFAULT 'activo',
-  PRIMARY KEY (`id_usuario`),
-  UNIQUE KEY `usuario` (`usuario`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- --------------------------------------------------------
 
--- -------------------------------------------------------------
---  MEMBRESIAS  (planes: Mensual / Trimestral / Anual)
--- -------------------------------------------------------------
-CREATE TABLE `membresias` (
-  `id_membresia`   INT           NOT NULL AUTO_INCREMENT,
-  `nombre`         VARCHAR(50)   NOT NULL,
-  `duracion_meses` INT           NOT NULL,
-  `precio`         DECIMAL(10,2) NOT NULL,
-  `descripcion`    TEXT,
-  `estado`         ENUM('activo','inactivo') DEFAULT 'activo',
-  PRIMARY KEY (`id_membresia`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-INSERT INTO `membresias` (`nombre`, `duracion_meses`, `precio`, `descripcion`) VALUES
-  ('Mensual',     1,  500.00, 'Acceso por 1 mes completo'),
-  ('Trimestral',  3, 1350.00, 'Acceso por 3 meses (10% de ahorro)'),
-  ('Anual',      12, 4800.00, 'Acceso por 12 meses (20% de ahorro)');
-
--- -------------------------------------------------------------
---  ENTRENADORES
--- -------------------------------------------------------------
-CREATE TABLE `entrenadores` (
-  `id_entrenador`     INT           NOT NULL AUTO_INCREMENT,
-  `nombre`            VARCHAR(100)  NOT NULL,
-  `especialidad`      VARCHAR(100)  DEFAULT NULL,
-  `telefono`          VARCHAR(20)   DEFAULT NULL,
-  `correo`            VARCHAR(100)  DEFAULT NULL,
-  `fecha_contratacion`DATE          DEFAULT NULL,
-  `tarifa_comision`   DECIMAL(10,2) DEFAULT '0.00',
-  `turno`             ENUM('Matutino','Vespertino','Completo') DEFAULT 'Completo',
-  `estado`            ENUM('activo','inactivo') DEFAULT 'activo',
-  PRIMARY KEY (`id_entrenador`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-INSERT INTO `entrenadores` (`nombre`, `especialidad`, `telefono`, `correo`, `fecha_contratacion`, `tarifa_comision`, `turno`, `estado`) VALUES
-  ('Paquito Cortez',            'Pesas',      '8341234567', 'test@gym.com',           '2026-03-07', 50.00, 'Matutino',   'activo'),
-  ('Jorge Daniel Torres Ramos', 'Calistenia', '8341546152', 'jorge.torr@gmail.com',   '2025-03-08', 45.00, 'Vespertino', 'activo');
-
--- -------------------------------------------------------------
---  SOCIOS
--- -------------------------------------------------------------
-CREATE TABLE `socios` (
-  `id_socio`            INT          NOT NULL AUTO_INCREMENT,
-  `nombre`              VARCHAR(100) NOT NULL,
-  `apellido`            VARCHAR(100) NOT NULL,
-  `foto`                VARCHAR(255) DEFAULT NULL,
-  `telefono`            VARCHAR(20)  DEFAULT NULL,
-  `contacto_emergencia` VARCHAR(255) DEFAULT NULL,
-  `correo`              VARCHAR(100) DEFAULT NULL,
-  `direccion`           TEXT,
-  `fecha_nacimiento`    DATE         DEFAULT NULL,
-  `fecha_registro`      DATE         DEFAULT NULL,
-  `fecha_vencimiento`   DATE         DEFAULT NULL,
-  `id_membresia`        INT          DEFAULT NULL,
-  `estado`              ENUM('activo','inactivo','vencido') DEFAULT 'activo',
-  `id_entrenador`       INT          DEFAULT NULL,
-  `qr_codigo`           VARCHAR(255) DEFAULT NULL,
-  PRIMARY KEY (`id_socio`),
-  UNIQUE KEY `qr_codigo` (`qr_codigo`),
-  KEY `fk_socio_membresia`  (`id_membresia`),
-  KEY `fk_socio_entrenador` (`id_entrenador`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-INSERT INTO `socios` (`nombre`, `apellido`, `telefono`, `contacto_emergencia`, `correo`, `direccion`, `fecha_nacimiento`, `fecha_registro`, `fecha_vencimiento`, `id_membresia`, `estado`, `id_entrenador`) VALUES
-  ('Rubí María',    'Cobos Ramos',         '8341543050', NULL, 'cobosrubi64@gmail.com',  '0 y 1 Servando Canales',    '2004-10-20', '2026-03-07', '2026-04-07', 1, 'activo', NULL),
-  ('Jesús Emmanuel','López Zúñiga',         '8342567889', NULL, 'chuy.lopez@live.com',   'Andromeda 534',              '2005-08-15', '2026-03-08', '2026-06-08', 2, 'activo', 2),
-  ('Esmeralda',     'Ramos Cortez',         '8342688449', NULL, 'esmeramos23@hotmail.com','Julián de la Cerda 809',    '1973-02-08', '2026-03-08', '2026-04-08', 3, 'activo', NULL),
-  ('Maximino',      'Orozco Betancourt',    '8342701650', NULL, 'maxorozco@gmail.com',   'Norias de los Angeles 431', '1961-06-11', '2026-03-08', '2026-06-08', 2, 'activo', 2);
-
--- =============================================================
---  TABLAS DE CLASES Y RUTINAS
--- =============================================================
-
-CREATE TABLE `clases` (
-  `id_clase`     INT          NOT NULL AUTO_INCREMENT,
-  `nombre_clase` VARCHAR(100) DEFAULT NULL,
-  `descripcion`  VARCHAR(255) DEFAULT NULL,
-  `horario`      VARCHAR(100) DEFAULT NULL,
-  `capacidad`    INT          DEFAULT NULL,
-  `estado`       VARCHAR(20)  DEFAULT 'activo',
-  PRIMARY KEY (`id_clase`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-CREATE TABLE `ejercicios` (
-  `id_ejercicio`  INT          NOT NULL AUTO_INCREMENT,
-  `nombre`        VARCHAR(150) NOT NULL,
-  `grupo_muscular`VARCHAR(100) DEFAULT NULL,
-  `descripcion`   TEXT,
-  PRIMARY KEY (`id_ejercicio`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-CREATE TABLE `rutinas` (
-  `id_rutina`     INT          NOT NULL AUTO_INCREMENT,
-  `nombre_rutina` VARCHAR(150) NOT NULL,
-  `descripcion`   TEXT,
-  `nivel`         VARCHAR(50)  DEFAULT NULL,
-  PRIMARY KEY (`id_rutina`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- =============================================================
---  TABLAS RELACIONALES (muchos a muchos)
--- =============================================================
-
-CREATE TABLE `entrenador_clase` (
-  `id_relacion`  INT NOT NULL AUTO_INCREMENT,
-  `id_entrenador`INT NOT NULL,
-  `id_clase`     INT NOT NULL,
-  PRIMARY KEY (`id_relacion`),
-  KEY `idx_ec_entrenador` (`id_entrenador`),
-  KEY `idx_ec_clase`      (`id_clase`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-CREATE TABLE `membresia_clase` (
-  `id_relacion` INT NOT NULL AUTO_INCREMENT,
-  `id_membresia`INT NOT NULL,
-  `id_clase`    INT NOT NULL,
-  PRIMARY KEY (`id_relacion`),
-  KEY `idx_mc_membresia` (`id_membresia`),
-  KEY `idx_mc_clase`     (`id_clase`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-CREATE TABLE `rutina_ejercicio` (
-  `id_relacion` INT NOT NULL AUTO_INCREMENT,
-  `id_rutina`   INT NOT NULL,
-  `id_ejercicio`INT NOT NULL,
-  `orden`       INT DEFAULT '0',
-  `series`      INT DEFAULT NULL,
-  `repeticiones`INT DEFAULT NULL,
-  PRIMARY KEY (`id_relacion`),
-  KEY `idx_re_rutina`    (`id_rutina`),
-  KEY `idx_re_ejercicio` (`id_ejercicio`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-CREATE TABLE `socio_clase` (
-  `id_registro`       INT  NOT NULL AUTO_INCREMENT,
-  `id_socio`          INT  NOT NULL,
-  `id_clase`          INT  NOT NULL,
-  `fecha_inscripcion` DATE NOT NULL,
-  `estado`            ENUM('inscrito','cancelado','asistio') DEFAULT 'inscrito',
-  PRIMARY KEY (`id_registro`),
-  KEY `idx_sc_socio` (`id_socio`),
-  KEY `idx_sc_clase` (`id_clase`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-CREATE TABLE `socio_rutina` (
-  `id_asignacion`INT  NOT NULL AUTO_INCREMENT,
-  `id_socio`     INT  NOT NULL,
-  `id_rutina`    INT  NOT NULL,
-  `fecha_inicio` DATE NOT NULL,
-  `fecha_fin`    DATE DEFAULT NULL,
-  PRIMARY KEY (`id_asignacion`),
-  KEY `idx_sr_socio`   (`id_socio`),
-  KEY `idx_sr_rutina`  (`id_rutina`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- =============================================================
---  MODULO FINANCIERO Y SEGUIMIENTO
--- =============================================================
-
-CREATE TABLE `pagos` (
-  `id_pago`     INT           NOT NULL AUTO_INCREMENT,
-  `id_socio`    INT           DEFAULT NULL,
-  `id_membresia`INT           DEFAULT NULL,
-  `monto`       DECIMAL(10,2) NOT NULL DEFAULT '0.00',
-  `fecha_pago`  DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `metodo_pago` VARCHAR(50)   DEFAULT NULL,
-  `referencia`  VARCHAR(100)  DEFAULT NULL,
-  `estado`      ENUM('pagado','pendiente','reembolsado') NOT NULL DEFAULT 'pagado',
-  PRIMARY KEY (`id_pago`),
-  KEY `idx_pago_socio`     (`id_socio`),
-  KEY `idx_pago_membresia` (`id_membresia`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-CREATE TABLE `socios_membresias` (
-  `id_registro` INT  NOT NULL AUTO_INCREMENT,
-  `id_socio`    INT  NOT NULL,
-  `id_membresia`INT  NOT NULL,
-  `fecha_inicio`DATE NOT NULL,
-  `fecha_fin`   DATE DEFAULT NULL,
-  `estado`      ENUM('activa','vencida','cancelada') NOT NULL DEFAULT 'activa',
-  `id_pago`     INT  DEFAULT NULL,
-  PRIMARY KEY (`id_registro`),
-  KEY `idx_sm_socio`     (`id_socio`),
-  KEY `idx_sm_membresia` (`id_membresia`),
-  KEY `idx_sm_pago`      (`id_pago`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-INSERT INTO `socios_membresias` (`id_socio`, `id_membresia`, `fecha_inicio`, `fecha_fin`, `estado`) VALUES
-  (1, 1, '2026-03-07', '2026-04-07', 'activa'),
-  (2, 2, '2026-03-08', '2026-06-08', 'activa'),
-  (4, 2, '2026-03-08', '2026-06-08', 'activa'),
-  (3, 3, '2026-03-08', '2026-04-08', 'activa');
+--
+-- Estructura de tabla para la tabla `asistencia`
+--
 
 CREATE TABLE `asistencia` (
-  `id_asistencia`INT  NOT NULL AUTO_INCREMENT,
-  `id_socio`     INT  NOT NULL,
-  `fecha`        DATE NOT NULL,
-  `hora_entrada` TIME DEFAULT NULL,
-  `hora_salida`  TIME DEFAULT NULL,
-  `medio`        VARCHAR(50) DEFAULT NULL,
-  PRIMARY KEY (`id_asistencia`),
-  KEY `idx_asistencia_socio` (`id_socio`)
+  `id_asistencia` int(11) NOT NULL,
+  `id_socio` int(11) NOT NULL,
+  `fecha` date NOT NULL,
+  `hora_entrada` time DEFAULT NULL,
+  `hora_salida` time DEFAULT NULL,
+  `medio` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE `reportes` (
-  `id_reporte`       INT      NOT NULL AUTO_INCREMENT,
-  `tipo_reporte`     VARCHAR(100) NOT NULL,
-  `fecha_generacion` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `generado_por`     INT      DEFAULT NULL,
-  `parametros`       JSON     DEFAULT NULL,
-  PRIMARY KEY (`id_reporte`),
-  KEY `fk_reporte_usuario` (`generado_por`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `bitacora`
+--
 
 CREATE TABLE `bitacora` (
-  `id_bitacora`INT          NOT NULL AUTO_INCREMENT,
-  `id_usuario` INT          DEFAULT NULL,
-  `accion`     VARCHAR(150) NOT NULL,
-  `modulo`     VARCHAR(80)  DEFAULT NULL,
-  `descripcion`TEXT,
-  `fecha`      DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id_bitacora`),
-  KEY `idx_bit_usuario` (`id_usuario`)
+  `id_bitacora` int(11) NOT NULL,
+  `id_usuario` int(11) DEFAULT NULL,
+  `accion` varchar(150) NOT NULL,
+  `modulo` varchar(80) DEFAULT NULL,
+  `descripcion` text DEFAULT NULL,
+  `fecha` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- =============================================================
---  CLAVES FORÁNEAS
--- =============================================================
+-- --------------------------------------------------------
 
+--
+-- Estructura de tabla para la tabla `clases`
+--
+
+CREATE TABLE `clases` (
+  `id_clase` int(11) NOT NULL,
+  `nombre_clase` varchar(100) DEFAULT NULL,
+  `descripcion` varchar(255) DEFAULT NULL,
+  `horario` varchar(100) DEFAULT NULL,
+  `capacidad` int(11) DEFAULT NULL,
+  `estado` varchar(20) DEFAULT 'activo'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `ejercicios`
+--
+
+CREATE TABLE `ejercicios` (
+  `id_ejercicio` int(11) NOT NULL,
+  `nombre` varchar(150) NOT NULL,
+  `grupo_muscular` varchar(100) DEFAULT NULL,
+  `descripcion` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `entrenadores`
+--
+
+CREATE TABLE `entrenadores` (
+  `id_entrenador` int(11) NOT NULL,
+  `nombre` varchar(100) NOT NULL,
+  `especialidad` varchar(100) DEFAULT NULL,
+  `telefono` varchar(20) DEFAULT NULL,
+  `correo` varchar(100) DEFAULT NULL,
+  `fecha_contratacion` date DEFAULT NULL,
+  `tarifa_comision` decimal(10,2) DEFAULT 0.00,
+  `turno` enum('Matutino','Vespertino','Completo') DEFAULT 'Completo',
+  `estado` enum('activo','inactivo') DEFAULT 'activo'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `entrenador_clase`
+--
+
+CREATE TABLE `entrenador_clase` (
+  `id_relacion` int(11) NOT NULL,
+  `id_entrenador` int(11) NOT NULL,
+  `id_clase` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `membresias`
+--
+
+CREATE TABLE `membresias` (
+  `id_membresia` int(11) NOT NULL,
+  `nombre` varchar(50) NOT NULL,
+  `duracion_meses` int(11) NOT NULL,
+  `precio` decimal(10,2) NOT NULL,
+  `descripcion` text DEFAULT NULL,
+  `estado` enum('activo','inactivo') DEFAULT 'activo'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `membresias`
+--
+
+INSERT INTO `membresias` (`id_membresia`, `nombre`, `duracion_meses`, `precio`, `descripcion`, `estado`) VALUES
+(1, 'Fase 1', 1, 500.00, 'Acceso por 1 mes completo', 'activo'),
+(2, 'Fase 2', 3, 1350.00, 'Acceso por 3 meses (10% de ahorro)', 'activo'),
+(3, 'Fase 3', 12, 4800.00, 'Acceso por 12 meses (20% de ahorro)', 'activo');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `membresia_clase`
+--
+
+CREATE TABLE `membresia_clase` (
+  `id_relacion` int(11) NOT NULL,
+  `id_membresia` int(11) NOT NULL,
+  `id_clase` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `pagos`
+--
+
+CREATE TABLE `pagos` (
+  `id_pago` int(11) NOT NULL,
+  `id_socio` int(11) DEFAULT NULL,
+  `id_membresia` int(11) DEFAULT NULL,
+  `monto` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `fecha_pago` datetime NOT NULL DEFAULT current_timestamp(),
+  `metodo_pago` varchar(50) DEFAULT NULL,
+  `referencia` varchar(100) DEFAULT NULL,
+  `estado` enum('pagado','pendiente','reembolsado') NOT NULL DEFAULT 'pagado'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `reportes`
+--
+
+CREATE TABLE `reportes` (
+  `id_reporte` int(11) NOT NULL,
+  `tipo_reporte` varchar(100) NOT NULL,
+  `fecha_generacion` datetime NOT NULL DEFAULT current_timestamp(),
+  `generado_por` int(11) DEFAULT NULL,
+  `parametros` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`parametros`))
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `rutinas`
+--
+
+CREATE TABLE `rutinas` (
+  `id_rutina` int(11) NOT NULL,
+  `nombre_rutina` varchar(150) NOT NULL,
+  `descripcion` text DEFAULT NULL,
+  `nivel` varchar(50) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `rutina_ejercicio`
+--
+
+CREATE TABLE `rutina_ejercicio` (
+  `id_relacion` int(11) NOT NULL,
+  `id_rutina` int(11) NOT NULL,
+  `id_ejercicio` int(11) NOT NULL,
+  `orden` int(11) DEFAULT 0,
+  `series` int(11) DEFAULT NULL,
+  `repeticiones` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `socios`
+--
+
+CREATE TABLE `socios` (
+  `id_socio` int(11) NOT NULL,
+  `nombre` varchar(100) NOT NULL,
+  `apellido` varchar(100) NOT NULL,
+  `foto` varchar(255) DEFAULT NULL,
+  `telefono` varchar(20) DEFAULT NULL,
+  `contacto_emergencia` varchar(255) DEFAULT NULL,
+  `correo` varchar(100) DEFAULT NULL,
+  `direccion` text DEFAULT NULL,
+  `fecha_nacimiento` date DEFAULT NULL,
+  `fecha_registro` date DEFAULT NULL,
+  `fecha_vencimiento` date DEFAULT NULL,
+  `id_membresia` int(11) DEFAULT NULL,
+  `estado` enum('activo','inactivo','vencido') DEFAULT 'activo',
+  `id_entrenador` int(11) DEFAULT NULL,
+  `qr_codigo` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `socios_membresias`
+--
+
+CREATE TABLE `socios_membresias` (
+  `id_registro` int(11) NOT NULL,
+  `id_socio` int(11) NOT NULL,
+  `id_membresia` int(11) NOT NULL,
+  `fecha_inicio` date NOT NULL,
+  `fecha_fin` date DEFAULT NULL,
+  `estado` enum('activa','vencida','cancelada') NOT NULL DEFAULT 'activa',
+  `id_pago` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `socio_clase`
+--
+
+CREATE TABLE `socio_clase` (
+  `id_registro` int(11) NOT NULL,
+  `id_socio` int(11) NOT NULL,
+  `id_clase` int(11) NOT NULL,
+  `fecha_inscripcion` date NOT NULL,
+  `estado` enum('inscrito','cancelado','asistio') DEFAULT 'inscrito'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `socio_rutina`
+--
+
+CREATE TABLE `socio_rutina` (
+  `id_asignacion` int(11) NOT NULL,
+  `id_socio` int(11) NOT NULL,
+  `id_rutina` int(11) NOT NULL,
+  `fecha_inicio` date NOT NULL,
+  `fecha_fin` date DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `usuarios`
+--
+
+CREATE TABLE `usuarios` (
+  `id_usuario` int(11) NOT NULL,
+  `nombre_completo` varchar(150) NOT NULL,
+  `usuario` varchar(50) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `rol` enum('Administrador','Recepcionista','Entrenador') DEFAULT 'Recepcionista',
+  `estado` enum('activo','inactivo') DEFAULT 'activo'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Índices para tablas volcadas
+--
+
+--
+-- Indices de la tabla `asistencia`
+--
+ALTER TABLE `asistencia`
+  ADD PRIMARY KEY (`id_asistencia`),
+  ADD KEY `idx_asistencia_socio` (`id_socio`);
+
+--
+-- Indices de la tabla `bitacora`
+--
+ALTER TABLE `bitacora`
+  ADD PRIMARY KEY (`id_bitacora`),
+  ADD KEY `idx_bit_usuario` (`id_usuario`);
+
+--
+-- Indices de la tabla `clases`
+--
+ALTER TABLE `clases`
+  ADD PRIMARY KEY (`id_clase`);
+
+--
+-- Indices de la tabla `ejercicios`
+--
+ALTER TABLE `ejercicios`
+  ADD PRIMARY KEY (`id_ejercicio`);
+
+--
+-- Indices de la tabla `entrenadores`
+--
+ALTER TABLE `entrenadores`
+  ADD PRIMARY KEY (`id_entrenador`);
+
+--
+-- Indices de la tabla `entrenador_clase`
+--
+ALTER TABLE `entrenador_clase`
+  ADD PRIMARY KEY (`id_relacion`),
+  ADD KEY `idx_ec_entrenador` (`id_entrenador`),
+  ADD KEY `idx_ec_clase` (`id_clase`);
+
+--
+-- Indices de la tabla `membresias`
+--
+ALTER TABLE `membresias`
+  ADD PRIMARY KEY (`id_membresia`);
+
+--
+-- Indices de la tabla `membresia_clase`
+--
+ALTER TABLE `membresia_clase`
+  ADD PRIMARY KEY (`id_relacion`),
+  ADD KEY `idx_mc_membresia` (`id_membresia`),
+  ADD KEY `idx_mc_clase` (`id_clase`);
+
+--
+-- Indices de la tabla `pagos`
+--
+ALTER TABLE `pagos`
+  ADD PRIMARY KEY (`id_pago`),
+  ADD KEY `idx_pago_socio` (`id_socio`),
+  ADD KEY `idx_pago_membresia` (`id_membresia`);
+
+--
+-- Indices de la tabla `reportes`
+--
+ALTER TABLE `reportes`
+  ADD PRIMARY KEY (`id_reporte`),
+  ADD KEY `fk_reporte_usuario` (`generado_por`);
+
+--
+-- Indices de la tabla `rutinas`
+--
+ALTER TABLE `rutinas`
+  ADD PRIMARY KEY (`id_rutina`);
+
+--
+-- Indices de la tabla `rutina_ejercicio`
+--
+ALTER TABLE `rutina_ejercicio`
+  ADD PRIMARY KEY (`id_relacion`),
+  ADD KEY `idx_re_rutina` (`id_rutina`),
+  ADD KEY `idx_re_ejercicio` (`id_ejercicio`);
+
+--
+-- Indices de la tabla `socios`
+--
 ALTER TABLE `socios`
-  ADD CONSTRAINT `fk_socio_membresia`  FOREIGN KEY (`id_membresia`)  REFERENCES `membresias`   (`id_membresia`),
-  ADD CONSTRAINT `fk_socio_entrenador` FOREIGN KEY (`id_entrenador`) REFERENCES `entrenadores` (`id_entrenador`) ON DELETE SET NULL ON UPDATE CASCADE;
+  ADD PRIMARY KEY (`id_socio`),
+  ADD UNIQUE KEY `qr_codigo` (`qr_codigo`),
+  ADD KEY `fk_socio_membresia` (`id_membresia`),
+  ADD KEY `fk_socio_entrenador` (`id_entrenador`);
 
+--
+-- Indices de la tabla `socios_membresias`
+--
+ALTER TABLE `socios_membresias`
+  ADD PRIMARY KEY (`id_registro`),
+  ADD KEY `idx_sm_socio` (`id_socio`),
+  ADD KEY `idx_sm_membresia` (`id_membresia`),
+  ADD KEY `idx_sm_pago` (`id_pago`);
+
+--
+-- Indices de la tabla `socio_clase`
+--
+ALTER TABLE `socio_clase`
+  ADD PRIMARY KEY (`id_registro`),
+  ADD KEY `idx_sc_socio` (`id_socio`),
+  ADD KEY `idx_sc_clase` (`id_clase`);
+
+--
+-- Indices de la tabla `socio_rutina`
+--
+ALTER TABLE `socio_rutina`
+  ADD PRIMARY KEY (`id_asignacion`),
+  ADD KEY `idx_sr_socio` (`id_socio`),
+  ADD KEY `idx_sr_rutina` (`id_rutina`);
+
+--
+-- Indices de la tabla `usuarios`
+--
+ALTER TABLE `usuarios`
+  ADD PRIMARY KEY (`id_usuario`),
+  ADD UNIQUE KEY `usuario` (`usuario`);
+
+--
+-- AUTO_INCREMENT de las tablas volcadas
+--
+
+--
+-- AUTO_INCREMENT de la tabla `asistencia`
+--
+ALTER TABLE `asistencia`
+  MODIFY `id_asistencia` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `bitacora`
+--
+ALTER TABLE `bitacora`
+  MODIFY `id_bitacora` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `clases`
+--
+ALTER TABLE `clases`
+  MODIFY `id_clase` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `ejercicios`
+--
+ALTER TABLE `ejercicios`
+  MODIFY `id_ejercicio` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `entrenadores`
+--
+ALTER TABLE `entrenadores`
+  MODIFY `id_entrenador` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT de la tabla `entrenador_clase`
+--
+ALTER TABLE `entrenador_clase`
+  MODIFY `id_relacion` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `membresias`
+--
+ALTER TABLE `membresias`
+  MODIFY `id_membresia` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT de la tabla `membresia_clase`
+--
+ALTER TABLE `membresia_clase`
+  MODIFY `id_relacion` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `pagos`
+--
+ALTER TABLE `pagos`
+  MODIFY `id_pago` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `reportes`
+--
+ALTER TABLE `reportes`
+  MODIFY `id_reporte` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `rutinas`
+--
+ALTER TABLE `rutinas`
+  MODIFY `id_rutina` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `rutina_ejercicio`
+--
+ALTER TABLE `rutina_ejercicio`
+  MODIFY `id_relacion` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `socios`
+--
+ALTER TABLE `socios`
+  MODIFY `id_socio` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT de la tabla `socios_membresias`
+--
+ALTER TABLE `socios_membresias`
+  MODIFY `id_registro` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT de la tabla `socio_clase`
+--
+ALTER TABLE `socio_clase`
+  MODIFY `id_registro` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `socio_rutina`
+--
+ALTER TABLE `socio_rutina`
+  MODIFY `id_asignacion` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `usuarios`
+--
+ALTER TABLE `usuarios`
+  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- Restricciones para tablas volcadas
+--
+
+--
+-- Filtros para la tabla `asistencia`
+--
 ALTER TABLE `asistencia`
   ADD CONSTRAINT `fk_asistencia_socio` FOREIGN KEY (`id_socio`) REFERENCES `socios` (`id_socio`) ON DELETE CASCADE ON UPDATE CASCADE;
 
+--
+-- Filtros para la tabla `bitacora`
+--
 ALTER TABLE `bitacora`
   ADD CONSTRAINT `fk_bit_usuario` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id_usuario`) ON DELETE SET NULL ON UPDATE CASCADE;
 
+--
+-- Filtros para la tabla `entrenador_clase`
+--
 ALTER TABLE `entrenador_clase`
-  ADD CONSTRAINT `fk_ec_entrenador` FOREIGN KEY (`id_entrenador`) REFERENCES `entrenadores` (`id_entrenador`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_ec_clase`      FOREIGN KEY (`id_clase`)      REFERENCES `clases`       (`id_clase`)      ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_ec_clase` FOREIGN KEY (`id_clase`) REFERENCES `clases` (`id_clase`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_ec_entrenador` FOREIGN KEY (`id_entrenador`) REFERENCES `entrenadores` (`id_entrenador`) ON DELETE CASCADE ON UPDATE CASCADE;
 
+--
+-- Filtros para la tabla `membresia_clase`
+--
 ALTER TABLE `membresia_clase`
-  ADD CONSTRAINT `fk_mc_membresia` FOREIGN KEY (`id_membresia`) REFERENCES `membresias` (`id_membresia`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_mc_clase`     FOREIGN KEY (`id_clase`)     REFERENCES `clases`     (`id_clase`)     ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_mc_clase` FOREIGN KEY (`id_clase`) REFERENCES `clases` (`id_clase`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_mc_membresia` FOREIGN KEY (`id_membresia`) REFERENCES `membresias` (`id_membresia`) ON DELETE CASCADE ON UPDATE CASCADE;
 
-ALTER TABLE `rutina_ejercicio`
-  ADD CONSTRAINT `fk_re_rutina`    FOREIGN KEY (`id_rutina`)    REFERENCES `rutinas`    (`id_rutina`)    ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_re_ejercicio` FOREIGN KEY (`id_ejercicio`) REFERENCES `ejercicios` (`id_ejercicio`) ON DELETE CASCADE ON UPDATE CASCADE;
-
-ALTER TABLE `socio_clase`
-  ADD CONSTRAINT `fk_sc_socio` FOREIGN KEY (`id_socio`) REFERENCES `socios` (`id_socio`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_sc_clase` FOREIGN KEY (`id_clase`) REFERENCES `clases` (`id_clase`) ON DELETE CASCADE ON UPDATE CASCADE;
-
-ALTER TABLE `socio_rutina`
-  ADD CONSTRAINT `fk_sr_socio`   FOREIGN KEY (`id_socio`)  REFERENCES `socios`  (`id_socio`)  ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_sr_rutina`  FOREIGN KEY (`id_rutina`) REFERENCES `rutinas` (`id_rutina`) ON DELETE CASCADE ON UPDATE CASCADE;
-
+--
+-- Filtros para la tabla `pagos`
+--
 ALTER TABLE `pagos`
-  ADD CONSTRAINT `fk_pago_socio`     FOREIGN KEY (`id_socio`)     REFERENCES `socios`     (`id_socio`)     ON DELETE SET NULL ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_pago_membresia` FOREIGN KEY (`id_membresia`) REFERENCES `membresias` (`id_membresia`) ON DELETE SET NULL ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_pago_membresia` FOREIGN KEY (`id_membresia`) REFERENCES `membresias` (`id_membresia`) ON DELETE SET NULL ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_pago_socio` FOREIGN KEY (`id_socio`) REFERENCES `socios` (`id_socio`) ON DELETE SET NULL ON UPDATE CASCADE;
 
-ALTER TABLE `socios_membresias`
-  ADD CONSTRAINT `fk_sm_socio`     FOREIGN KEY (`id_socio`)     REFERENCES `socios`     (`id_socio`)     ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_sm_membresia` FOREIGN KEY (`id_membresia`) REFERENCES `membresias` (`id_membresia`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_sm_pago`      FOREIGN KEY (`id_pago`)      REFERENCES `pagos`      (`id_pago`)      ON DELETE SET NULL ON UPDATE CASCADE;
-
+--
+-- Filtros para la tabla `reportes`
+--
 ALTER TABLE `reportes`
   ADD CONSTRAINT `fk_reporte_usuario` FOREIGN KEY (`generado_por`) REFERENCES `usuarios` (`id_usuario`) ON DELETE SET NULL ON UPDATE CASCADE;
 
+--
+-- Filtros para la tabla `rutina_ejercicio`
+--
+ALTER TABLE `rutina_ejercicio`
+  ADD CONSTRAINT `fk_re_ejercicio` FOREIGN KEY (`id_ejercicio`) REFERENCES `ejercicios` (`id_ejercicio`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_re_rutina` FOREIGN KEY (`id_rutina`) REFERENCES `rutinas` (`id_rutina`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Filtros para la tabla `socios`
+--
+ALTER TABLE `socios`
+  ADD CONSTRAINT `fk_socio_entrenador` FOREIGN KEY (`id_entrenador`) REFERENCES `entrenadores` (`id_entrenador`) ON DELETE SET NULL ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_socio_membresia` FOREIGN KEY (`id_membresia`) REFERENCES `membresias` (`id_membresia`);
+
+--
+-- Filtros para la tabla `socios_membresias`
+--
+ALTER TABLE `socios_membresias`
+  ADD CONSTRAINT `fk_sm_membresia` FOREIGN KEY (`id_membresia`) REFERENCES `membresias` (`id_membresia`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_sm_pago` FOREIGN KEY (`id_pago`) REFERENCES `pagos` (`id_pago`) ON DELETE SET NULL ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_sm_socio` FOREIGN KEY (`id_socio`) REFERENCES `socios` (`id_socio`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Filtros para la tabla `socio_clase`
+--
+ALTER TABLE `socio_clase`
+  ADD CONSTRAINT `fk_sc_clase` FOREIGN KEY (`id_clase`) REFERENCES `clases` (`id_clase`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_sc_socio` FOREIGN KEY (`id_socio`) REFERENCES `socios` (`id_socio`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Filtros para la tabla `socio_rutina`
+--
+ALTER TABLE `socio_rutina`
+  ADD CONSTRAINT `fk_sr_rutina` FOREIGN KEY (`id_rutina`) REFERENCES `rutinas` (`id_rutina`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_sr_socio` FOREIGN KEY (`id_socio`) REFERENCES `socios` (`id_socio`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
--- =============================================================
---  FIN DEL SCRIPT — GYM RR © 2026
--- =============================================================
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
