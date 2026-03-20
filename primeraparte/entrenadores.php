@@ -18,7 +18,7 @@ include 'header.php';
       </div>
       <div class="col-auto">
         <!-- Botón para ir al formulario de registrar un nuevo entrenador -->
-        <a href="/Sayagym/primeraparte/nuevo_entrenador.php" class="btn btn-red">
+        <a href="/Sayagym/primeraparte/nuevoEntrenador.php" class="btn btn-red">
           <i class="ti ti-plus"></i> Registrar Entrenador
         </a>
       </div>
@@ -98,13 +98,13 @@ while ($e = $res->fetch_assoc()) {
               <!-- Columna 6: Interacciones y Botones -->
               <td>
                 <div class="btn-list">
-                  <!-- Botón Editar que redirige a 'editar_entrenador.php' indicando el ID del sujeto de forma oculta (?id=X) -->
-                  <a href="/Sayagym/primeraparte/editar_entrenador.php?id=<?php echo $e['id_entrenador']; ?>" class="btn btn-icon edit" title="Editar este registro">
+                  <!-- Botón Editar que redirige a 'editarEntrenador.php' indicando el ID del sujeto de forma oculta (?id=X) -->
+                  <a href="/Sayagym/primeraparte/editarEntrenador.php?id=<?php echo $e['id_entrenador']; ?>" class="btn btn-icon edit" title="Editar este registro">
                     <i class="ti ti-edit"></i>
                   </a>
                   
                   <!-- Botón Eliminar que lanza una ventanita preguntóna javascript de precaución ("confirm") antes de continuar -->
-                  <a href="/Sayagym/primeraparte/eliminar_entrenador.php?id=<?php echo $e['id_entrenador']; ?>"
+                  <a href="/Sayagym/primeraparte/eliminarEntrenador.php?id=<?php echo $e['id_entrenador']; ?>"
                      class="btn btn-icon" title="Eliminar registro"
                      onclick="return confirm('¿Estás totalmente seguro de intentar eliminar a este entrenador definitivo?');">
                     <i class="ti ti-trash"></i>

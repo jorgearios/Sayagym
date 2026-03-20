@@ -14,7 +14,7 @@ include 'header.php';
         <p class="page-subtitle">Monitoreo de vencimientos y planes contratados.</p>
       </div>
       <div class="col-auto">
-        <a href="nuevo_socio.php" class="btn btn-red">
+        <a href="nuevoSocio.php" class="btn btn-red">
           <i class="ti ti-plus"></i> Nuevo Socio
         </a>
       </div>

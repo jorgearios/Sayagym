@@ -38,7 +38,7 @@ if ($_POST) {
     $filename = time() . '_' . rand(1000, 9999) . '.' . $ext;
 
     // Indicamos dónde la vamos a guardar usando una ruta relativa de carpeta
-    $dest = "uploads/" . $filename;
+    $dest = "imagenes/" . $filename;
 
     // Movemos el archivo temporal (que nos llega del formulario en memoria) a nuestra carpeta "uploads"
     if (move_uploaded_file($_FILES['foto']['tmp_name'], $dest)) {

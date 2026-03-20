@@ -546,10 +546,11 @@
                     Inicio
                 </a>
             </li>
+            <?php if (esAdministrador()): ?>
             <li class="nav-item-drop">
                 <a href="#" class="nav-link-drop has-drop">
                     <i class="ti ti-users"></i>
-                    Módulos
+                    Administración
                     <i class="ti ti-chevron-down drop-arrow"></i>
                 </a>
                 <div class="dropdown-menu">
@@ -558,16 +559,31 @@
                     <a href="membresias.php"><i class="ti ti-calendar-event"></i> Membresías</a>
                 </div>
             </li>
+            
+            <li class="nav-item-drop">
+                <a href="pagos.php" class="nav-link-drop">
+                    <i class="ti ti-cash"></i>
+                    Caja y Pagos
+                </a>
+            </li>
+            <?php endif; ?>
         </ul>
 
-        <!-- User Badge -->
-        <div class="gym-user-badge">
-            <div class="user-avatar">
-                <i class="ti ti-user"></i>
-            </div>
-            <span class="user-name">Admin</span>
-            <i class="ti ti-chevron-down" style="font-size:0.75rem; opacity:0.6;"></i>
-        </div>
+        <!-- User Badge with Dropdown for Logout -->
+        <ul style="list-style:none; margin:0; padding:0;">
+            <li class="nav-item-drop">
+                <div class="gym-user-badge">
+                    <div class="user-avatar">
+                        <i class="ti ti-user"></i>
+                    </div>
+                    <span class="user-name"><?php echo htmlspecialchars($_SESSION['nombre'] ?? 'Usuario'); ?> (<?php echo $_SESSION['rol'] ?? ''; ?>)</span>
+                    <i class="ti ti-chevron-down" style="font-size:0.75rem; opacity:0.6;"></i>
+                </div>
+                <div class="dropdown-menu" style="right:0; left:auto; min-width:150px;">
+                    <a href="logout.php"><i class="ti ti-logout text-red"></i> Cerrar Sesión</a>
+                </div>
+            </li>
+        </ul>
 
     </div>
 </nav>

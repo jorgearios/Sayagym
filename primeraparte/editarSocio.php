@@ -31,7 +31,7 @@ if (isset($_GET['id'])) {
 
 // Ahora, si por mala suerte tampoco dimos ni con un ID cargado, ¡Y además! el usuario nunca llenó los datos todavía a través del formulario... 
 if (!$socio && !$_POST) {
-  // Los devolvemos de regreso otra vez, de este modo evitamos los típicos errores cuando entran a la dirección manualmente "Sayagym/editar_socio.php".
+  // Los devolvemos de regreso otra vez, de este modo evitamos los típicos errores cuando entran a la dirección manualmente "Sayagym/editarSocio.php".
   echo "<script>window.location='/Sayagym/primeraparte/socios.php';</script>";
   exit;
 }
@@ -66,7 +66,7 @@ if ($_POST) {
     $ext = pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION);
     // Combinamos la cifra que da 'time()' con su aleatorización 'rand' hasta sumar ese .jpg al final para darle el estilo universal y seguro
     $filename = time() . '_' . rand(1000, 9999) . '.' . $ext;
-    $dest = "uploads/" . $filename;
+    $dest = "imagenes/" . $filename;
 
     // Ahora ordenamos la instrucción general: Transfiere la imagen retenida de temp (.tmp) hacía mis documentos reales: a 'uploads/'
     if (move_uploaded_file($_FILES['foto']['tmp_name'], $dest)) {

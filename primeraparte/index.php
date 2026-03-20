@@ -6,6 +6,12 @@ include 'config.php';
 // Incluimos el encabezado de la página (esto carga el menú y el diseño principal HTML)
 include 'header.php';
 
+// Si es socio, no deberia ver este panel. Lo redirigimos a su perfil.
+if (esSocio()) {
+    echo "<script>window.location='inicioSocio.php';</script>";
+    exit();
+}
+
 // Guardamos la fecha de hoy en formato Año-Mes-Día para usarla en nuestros cálculos después
 $hoy = date('Y-m-d');
 
@@ -141,8 +147,8 @@ $por_vencer = $conexion->query("SELECT nombre, apellido, fecha_vencimiento, esta
       </div>
       <div class="hero-actions">
         <!-- Estos enlaces llevan a crear recursos nuevos -->
-        <a href="nuevo_entrenador.php" class="btn-hero-out"><i class="ti ti-plus"></i> Entrenador</a>
-        <a href="nuevo_socio.php" class="btn-hero-sol"><i class="ti ti-user-plus"></i> Inscribir Socio</a>
+        <a href="nuevoEntrenador.php" class="btn-hero-out"><i class="ti ti-plus"></i> Entrenador</a>
+        <a href="nuevoSocio.php" class="btn-hero-sol"><i class="ti ti-user-plus"></i> Inscribir Socio</a>
       </div>
     </div>
 
