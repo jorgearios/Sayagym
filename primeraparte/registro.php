@@ -12,22 +12,35 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $telefono = $_POST['telefono'];
     $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
     
+    // Verificar si la columna password existe, si no, crearla
+    $check_col = $conexion->query("SHOW COLUMNS FROM socios LIKE 'password'");
+    if ($check_col->num_rows == 0) {
+        $hash_default = password_hash('123456', PASSWORD_DEFAULT);
+        $conexion->query("ALTER TABLE socios ADD COLUMN password VARCHAR(255) DEFAULT '$hash_default' AFTER correo");
+    }
+
     // Validar si el correo ya existe
     $stmt_val = $conexion->prepare("SELECT id_socio FROM socios WHERE correo = ?");
-    $stmt_val->bind_param("s", $correo);
-    $stmt_val->execute();
-    if ($stmt_val->get_result()->num_rows > 0) {
-        $mensaje = "<div class='alert'>El correo electrónico ingresado ya se encuentra registrado. Intenta <a href='login.php' style='color:inherit;text-decoration:underline;'>iniciar sesión</a>.</div>";
+    if (!$stmt_val) {
+        $mensaje = "<div class='alert'>Error interno: " . $conexion->error . "</div>";
     } else {
-        $fecha_registro = date('Y-m-d');
-        // El socio nace "activo" pero sin membresía (con fecha de vencimiento igual a hoy para que cuente como vencido)
-        $stmt_ins = $conexion->prepare("INSERT INTO socios (nombre, apellido, correo, telefono, password, estado, fecha_registro, fecha_vencimiento) VALUES (?, ?, ?, ?, ?, 'activo', ?, ?)");
-        $stmt_ins->bind_param("sssssss", $nombre, $apellido, $correo, $telefono, $password, $fecha_registro, $fecha_registro);
-        
-        if ($stmt_ins->execute()) {
-            $mensaje = "<div class='alert' style='background:var(--green-lt); color:var(--green); border-left-color:var(--green);'>¡Cuenta creada exitosamente! Ahora puedes <a href='login.php' style='color:inherit; text-decoration:underline;'>iniciar sesión</a>.</div>";
+        $stmt_val->bind_param("s", $correo);
+        $stmt_val->execute();
+        if ($stmt_val->get_result()->num_rows > 0) {
+            $mensaje = "<div class='alert'>El correo ya está registrado. Intenta <a href='login.php' style='color:inherit;text-decoration:underline;'>iniciar sesión</a>.</div>";
         } else {
-            $mensaje = "<div class='alert'>Ocurrió un error general: " . $conexion->error . "</div>";
+            $fecha_registro = date('Y-m-d');
+            $stmt_ins = $conexion->prepare("INSERT INTO socios (nombre, apellido, correo, telefono, password, estado, fecha_registro, fecha_vencimiento) VALUES (?, ?, ?, ?, ?, 'activo', ?, ?)");
+            if (!$stmt_ins) {
+                $mensaje = "<div class='alert'>Error al preparar registro: " . $conexion->error . "</div>";
+            } else {
+                $stmt_ins->bind_param("sssssss", $nombre, $apellido, $correo, $telefono, $password, $fecha_registro, $fecha_registro);
+                if ($stmt_ins->execute()) {
+                    $mensaje = "<div class='alert' style='background:var(--green-lt); color:var(--green); border-left-color:var(--green);'>¡Cuenta creada! Ahora puedes <a href='login.php' style='color:inherit; text-decoration:underline;'>iniciar sesión</a>.</div>";
+                } else {
+                    $mensaje = "<div class='alert'>Error: " . $conexion->error . "</div>";
+                }
+            }
         }
     }
 }

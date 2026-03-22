@@ -9,7 +9,8 @@ $error = "";
 if (isset($_SESSION['usuario_id'])) {
     if ($_SESSION['rol'] === 'Administrador') {
         header("Location: index.php");
-    } else {
+    }
+    else {
         header("Location: inicioSocio.php");
     }
     exit();
@@ -19,41 +20,58 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $identificador = $_POST['identificador'];
     $password = $_POST['password'];
 
-    // 1. Intentar como Administrador (En la tabla de usuarios)
+    // 1. Intentar como Administrador
     $stmt_admin = $conexion->prepare("SELECT id_usuario, nombre_completo, password, rol FROM usuarios WHERE usuario = ? AND estado = 'activo'");
-    $stmt_admin->bind_param("s", $identificador);
-    $stmt_admin->execute();
-    $res_admin = $stmt_admin->get_result();
-    
-    if ($row = $res_admin->fetch_assoc()) {
+
+    if ($stmt_admin) {
+        $stmt_admin->bind_param("s", $identificador);
+        $stmt_admin->execute();
+        $res_admin = $stmt_admin->get_result();
+        $row = $res_admin->fetch_assoc();
+    }
+    else {
+        $row = null;
+    }
+
+    if ($row) {
         if (password_verify($password, $row['password'])) {
             $_SESSION['usuario_id'] = $row['id_usuario'];
             $_SESSION['nombre'] = $row['nombre_completo'];
             $_SESSION['rol'] = 'Administrador';
             header("Location: index.php");
             exit();
-        } else {
+        }
+        else {
             $error = "Contraseña incorrecta.";
         }
-    } else {
-        // 2. Si no es Admin, intentarlo como Socio (por correo)
+    }
+    else {
+        // 2. Intentar como Socio (por correo)
         $stmt_socio = $conexion->prepare("SELECT id_socio, nombre, apellido, password FROM socios WHERE correo = ? AND estado != 'inactivo'");
-        $stmt_socio->bind_param("s", $identificador);
-        $stmt_socio->execute();
-        $res_socio = $stmt_socio->get_result();
-        
-        if ($row_socio = $res_socio->fetch_assoc()) {
+
+        if ($stmt_socio) {
+            $stmt_socio->bind_param("s", $identificador);
+            $stmt_socio->execute();
+            $res_socio = $stmt_socio->get_result();
+            $row_socio = $res_socio->fetch_assoc();
+        }
+        else {
+            $row_socio = null;
+        }
+
+        if ($row_socio) {
             if (password_verify($password, $row_socio['password'])) {
                 $_SESSION['usuario_id'] = $row_socio['id_socio'];
                 $_SESSION['nombre'] = $row_socio['nombre'] . ' ' . $row_socio['apellido'];
                 $_SESSION['rol'] = 'Socio';
                 header("Location: inicioSocio.php");
                 exit();
-            } else {
+            }
+            else {
                 $error = "Contraseña incorrecta.";
             }
-        } else {
-            // Si el correo no existe en socios tampoco...
+        }
+        else {
             $error = "Usuario o correo no encontrado, o cuenta inactiva.";
         }
     }
@@ -112,7 +130,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             
             <?php if ($error !== "") { ?>
                 <div class="alert"><i class="ti ti-alert-circle me-1"></i> <?php echo $error; ?></div>
-            <?php } ?>
+            <?php
+}?>
 
             <form action="login.php" method="POST">
                 

@@ -14,7 +14,7 @@ if (isset($_GET['id'])) {
     // Desplegamos y forzamos el intento y agresividad constructiva contra la propia base matriz "query" de manera activa.. Y posteriormente revisaremos tras un filtro con condicional la realidad y éxito puro (TRUE o FALSE) del borroso registro.
     if ($conexion->query($sql)) {
         // Redirigiremos elegantemente con este código especial al lugar general de proveniencia donde la lista original subyacía, no sin antes, colarle un pequeño trofeo de validación de etiqueta con marca ("?res=eliminado") para iluminar un aviso rojo informativo general al usuario ciego
-        header("Location: /Sayagym/primeraparte/entrenadores.php?res=eliminado");
+        header("Location: entrenadores.php?res=eliminado");
     }
     else {
         // Y en su debido contrastante o polar efecto, si una fatalidad o vínculo relacional prohíbe el corte neto inquebrantable entre el maestro de este individuo a eliminar, presentaremos un seco tropiezo informativo extraído desde el propio y original núcleo de MySQL y lo imprimimos al descubierto total de pantalla
@@ -23,7 +23,7 @@ if (isset($_GET['id'])) {
 }
 else {
     // Escolta normal y rebote pasivo y pacifico a una zona estable si alguien teclea mágicamente 'eliminar' u oscurece la url erróneamente sin justificaciones de ID. 
-    header("Location: /Sayagym/primeraparte/entrenadores.php");
+    header("Location: entrenadores.php");
 }
 
 // Interrumpimos y abandonamos lícitamente inmiscuidas las labores previas de red tras la línea actual culminando el total alcance y asegurando que nuestro documento ya no intentará procesar mas lineas estrafalarias o raras ni HTML

@@ -24,7 +24,7 @@ if (isset($_GET['id'])) {
   // Si misteriosamente la variable $socio se quedó absolutamente vacía, entonces el socio no se halló / o se metió un número incorrecto sin querer a la url
   if (!$socio) {
     // Así que regresamos silenciosamente a la lista de socios como si no ocurrió nada sin error, salimos ("exit").
-    echo "<script>window.location='/Sayagym/primeraparte/socios.php';</script>";
+    echo "<script>window.location='socios.php';</script>";
     exit;
   }
 }
@@ -32,7 +32,7 @@ if (isset($_GET['id'])) {
 // Ahora, si por mala suerte tampoco dimos ni con un ID cargado, ¡Y además! el usuario nunca llenó los datos todavía a través del formulario... 
 if (!$socio && !$_POST) {
   // Los devolvemos de regreso otra vez, de este modo evitamos los típicos errores cuando entran a la dirección manualmente "Sayagym/editarSocio.php".
-  echo "<script>window.location='/Sayagym/primeraparte/socios.php';</script>";
+  echo "<script>window.location='socios.php';</script>";
   exit;
 }
 
@@ -87,7 +87,7 @@ if ($_POST) {
   // Aquí ejecutamos e interrogamos la validación
   if ($conexion->query($sql)) {
     // Victoria: enviamos una ruta nueva hacia nuestra listado base pero le metemos una marca final de URL '?res=editado' para activar una cajita verde en la visual de esa ventana. Finalizamos de igual forma; "exit"
-    echo "<script>window.location='/Sayagym/primeraparte/socios.php?res=editado';</script>";
+    echo "<script>window.location='socios.php?res=editado';</script>";
     exit;
   }
   else {
@@ -234,7 +234,7 @@ while ($ent = $resultado_entrenadores->fetch_assoc()) {
       <!-- Parte fina final de nuestro documento principal card-footer -->
       <div class="card-footer">
         <!-- Redireccionamiento general: el botón Cancelar -->
-        <a href="/Sayagym/primeraparte/socios.php" class="btn btn-link">Cancelar Operación</a>
+        <a href="socios.php" class="btn btn-link">Cancelar Operación</a>
         
         <!-- Botón que desencadena absolutamente toda la máquina de recolección hacia la cima de todo nuestro código (tipo: submit) -->
         <button type="submit" class="btn btn-gold"><i class="ti ti-device-floppy me-1"></i>Guardar Modificaciones Cambios</button>

@@ -15,7 +15,7 @@ if (isset($_GET['id'])) {
     // Si funciona correctamente ($conexion->query devuelve true)
     if ($conexion->query($sql)) {
         // Redirigimos al usuario a la lista de socios con un mensaje de éxito ("res=eliminado")
-        header("Location: /Sayagym/primeraparte/socios.php?res=eliminado");
+        header("Location: socios.php?res=eliminado");
     }
     else {
         // Si hubo un error en la base de datos, lo mostramos en pantalla
@@ -24,7 +24,7 @@ if (isset($_GET['id'])) {
 }
 else {
     // Si no se envió ningún ID a eliminar, simplemente regresamos a la lista de socios
-    header("Location: /Sayagym/primeraparte/socios.php");
+    header("Location: socios.php");
 }
 
 // Detenemos la ejecución del programa aquí, ya que no necesitamos procesar nada más

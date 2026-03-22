@@ -1,29 +1,32 @@
 <?php
-// Script temporal para actualizar la base de datos
 include 'config.php';
 
-// Añadir la columna de contraseña a los socios si no existe
+// 1. Añadir columna password a socios si no existe
 $check_col = $conexion->query("SHOW COLUMNS FROM socios LIKE 'password'");
 if ($check_col->num_rows == 0) {
-    // Generamos un hash simple, por ejemplo '123456'
     $hash = password_hash('123456', PASSWORD_DEFAULT);
     $conexion->query("ALTER TABLE socios ADD COLUMN password VARCHAR(255) DEFAULT '$hash' AFTER correo");
-    echo "Columna password añadida correctamente a los socios (Contraseña default: 123456).<br>";
+    echo "Columna password añadida a socios (contraseña default: 123456)<br>";
 }
 else {
-    echo "La columna password ya existe en la tabla socios.<br>";
+    echo "Columna password ya existe en socios<br>";
 }
 
-// Comprobar si existe un admin
-$check_admin = $conexion->query("SELECT * FROM usuarios WHERE rol = 'Admin'");
+// 2. Crear admin si no existe (busca por rol = 'Administrador')
+$check_admin = $conexion->query("SELECT * FROM usuarios WHERE rol = 'Administrador' LIMIT 1");
 if ($check_admin->num_rows == 0) {
     $hash_admin = password_hash('admin123', PASSWORD_DEFAULT);
-    $conexion->query("INSERT INTO usuarios (nombre_completo, usuario, password, rol, estado) VALUES ('Admin Principal', 'admin', '$hash_admin', 'Administrador', 'activo')");
-    echo "Administrador creado correctamente (Usuario: admin / Clave: admin123).<br>";
+    $result = $conexion->query("INSERT INTO usuarios (nombre_completo, usuario, password, rol, estado) VALUES ('Admin Principal', 'admin', '$hash_admin', 'Administrador', 'activo')");
+    if ($result) {
+        echo "Administrador creado — Usuario: <strong>admin</strong> / Contraseña: <strong>admin123</strong><br>";
+    }
+    else {
+        echo "Error al crear admin: " . $conexion->error . "<br>";
+    }
 }
 else {
-    echo "Ya existe al menos un Administrador en la tabla usuarios.<br>";
+    echo "Ya existe un Administrador<br>";
 }
 
-echo "Configuración inicial completada.";
+echo "<br><strong>Listo.</strong> Ahora puedes ir al <a href='login.php'>Login</a>.";
 ?>

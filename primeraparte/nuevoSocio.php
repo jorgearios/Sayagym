@@ -74,7 +74,7 @@ if ($_POST) {
   // Ejecutamos la orden SQL
   if ($conexion->query($sql)) {
     // Si funcionó bien y guardó el registro, utilizamos un código JavaScript (script) para mandar al usuario la lista de socios
-    echo "<script>window.location='/Sayagym/primeraparte/socios.php';</script>";
+    echo "<script>window.location='socios.php';</script>";
   // Alternativamente, se pudo usar header("Location: ...");
   }
   else {
@@ -189,7 +189,7 @@ while ($p = $profes->fetch_assoc()) {
         <!-- Pie (inferior) de nuestra tarjeta -->
         <div class="card-footer">
           <!-- Botón o Vínculo web normal que sirve para regresarse o cancelar toda la instrucción de arriba -->
-          <a href="/Sayagym/primeraparte/index.php" class="btn btn-link">Cancelar</a>
+          <a href="index.php" class="btn btn-link">Cancelar</a>
           <!-- Botón definitivo tipo "submit" que envía absolutamente toda la información a donde empezamos en la línea = "if($_POST)" -->
           <button type="submit" class="btn btn-red"><i class="ti ti-check me-1"></i>Registrar Socio</button>
         </div>

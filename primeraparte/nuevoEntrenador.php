@@ -25,7 +25,7 @@ if ($_POST) {
   // Ejecutamos o disparamos la instrucción estructurada de arriba
   if ($conexion->query($sql)) {
     // En caso triunfal, usamos una miniatura de JavaScript para regresar al usuario hacía la lista extensa de todos los entrenadores
-    echo "<script>window.location='/Sayagym/primeraparte/entrenadores.php';</script>";
+    echo "<script>window.location='entrenadores.php';</script>";
   // Nota: se podía haber usado el equivalente de servidor: header('Location: ...');
   }
   else {
@@ -104,7 +104,7 @@ if ($_POST) {
         
         <div class="card-footer">
           <!-- Botón o ancla inofensiva destructora o canceladora de retorno. -->
-          <a href="/Sayagym/primeraparte/entrenadores.php" class="btn btn-link">Cancelar la Alta</a>
+          <a href="entrenadores.php" class="btn btn-link">Cancelar la Alta</a>
           <!-- Acción definitiva para detonar toda mi operación programada (POST) guardadora de este sistema actual -->
           <button type="submit" class="btn btn-red"><i class="ti ti-check me-1"></i>Dar de Alta</button>
         </div>

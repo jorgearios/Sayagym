@@ -21,14 +21,14 @@ if (isset($_GET['id'])) {
     
     // Y un gran percatado, en caso raro o desafortunado sin registro actual a editar: retornarnos (huir rápidamente atrás).
     if (!$e) {
-        echo "<script>window.location='/Sayagym/primeraparte/entrenadores.php';</script>";
+        echo "<script>window.location='entrenadores.php';</script>";
         exit;
     }
 }
 
 // Filtrajes para el "Sabelotodo" (Hacker o curioso) sin propósitos claros. De no mandar petición oficial o su nombre de ID, botaremos a dicho explorador devuelto a la anterior etapa pasiva 
 if (!$e && !$_POST) {
-    echo "<script>window.location='/Sayagym/primeraparte/entrenadores.php';</script>";
+    echo "<script>window.location='entrenadores.php';</script>";
     exit;
 }
 
@@ -57,7 +57,7 @@ if ($_POST) {
     // Mandamos el comando decisivo  y aguardemos la validación o rechazo 
     if ($conexion->query($sql)) {
         // Victoria: Emitiremos una rápida transición javascript regresando al origen de inicio, anexando la variable estigmatizada "?res=editado", aclamando la victoria del recuadro
-        echo "<script>window.location='/Sayagym/primeraparte/entrenadores.php?res=editado';</script>";
+        echo "<script>window.location='entrenadores.php?res=editado';</script>";
         exit;
     } else {
         // En adversidad, desplegaremos la falla original, mostramos este cajón o alert (Alerta roja clásica danger de componente HTML y Bootstrap). 
@@ -142,7 +142,7 @@ if ($_POST) {
       <!-- Líneas inferiores de confirmación de botón -->
       <div class="card-footer">
         <!-- Vínculo retrovisor pasivo cancelador global de operaciones, huida.  -->
-        <a href="/Sayagym/primeraparte/entrenadores.php" class="btn btn-link">Cancelar Regreso Vacuo</a>
+        <a href="entrenadores.php" class="btn btn-link">Cancelar Regreso Vacuo</a>
         
         <!-- Botón que desencadenará obligatoriamente la maquinaria procesadora (submit) de toda nuestra reconstrucción del perfil viejo de arriba en un perfil final -->
         <button type="submit" class="btn btn-red"><i class="ti ti-device-floppy me-1"></i>Actualizar Perfil Existente Integrado</button>
