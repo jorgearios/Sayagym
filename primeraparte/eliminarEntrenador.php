@@ -1,6 +1,10 @@
 <?php
 // Primero traemos toda nuestra principal herramienta conectora a la matriz web local de bases de datos central 
 include 'config.php';
+if (!esAdministrador()) {
+    header("Location: login.php");
+    exit();
+}
 
 // Observamos meticulosamente si entre las variables proveídas por el URL o barra de hipervínculos navegable (GET) existe el atributo singularizado 'id' (!Si un botón nos lo inyectó)
 if (isset($_GET['id'])) {

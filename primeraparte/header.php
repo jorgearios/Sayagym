@@ -1,3 +1,13 @@
+<?php
+// Incluir auth si no fue cargado aún (protección por si config.php no lo incluye)
+if (!function_exists('esAdministrador')) {
+    include_once 'auth.php';
+}
+// Crear carpeta de imágenes si no existe
+if (!is_dir('imagenes')) {
+    mkdir('imagenes', 0755, true);
+}
+?>
 <!doctype html>
 <html lang="es">
 <head>
@@ -351,6 +361,7 @@
         .badge-blue    { background: #DBEAFE; color: var(--blue); }
         .badge-purple  { background: #EDE9FE; color: #6D28D9; }
         .badge-gray    { background: #F3F4F6; color: #374151; }
+        .badge-secondary { background: #F3F4F6; color: #6B7280; }
 
         /* ─── FORM CONTROLS ───────────────────────────── */
         .form-label {
@@ -535,7 +546,8 @@
 
         <!-- Logo Badge -->
         <a href="index.php" class="gym-brand-badge">
-            <img src="../Sayagym%20logo.png" alt="Sayagym Logo" class="gym-logo-img">
+            <img src="../Sayagym%20logo.png" alt="Sayagym Logo" class="gym-logo-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+            <span style="display:none; font-family:'Oswald',sans-serif; font-size:1.3rem; font-weight:700; color:#fff; letter-spacing:2px; padding:0 8px;">SAYAGYM</span>
         </a>
 
         <!-- Nav Items -->

@@ -1,7 +1,11 @@
 <?php 
 // 1. Configuraciones previas y cabeceras operativas del visual y conexion base de datos
 include 'config.php';
-include 'header.php'; 
+if (!esAdministrador()) {
+    header("Location: login.php");
+    exit();
+}
+include 'header.php';
 
 // Preparamos nuestro recipiente general "$e" ($Entrenador) que es inicializado enteramente en blanco momentáneo con un texto que simboliza "null" (nada).
 $e = null;

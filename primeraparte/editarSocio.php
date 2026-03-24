@@ -2,6 +2,10 @@
 // === INICIO DEL PROGRAMA ===
 // Incluimos nuestro archivo de configuración (conexión) y la cabecera del sitio (HTML principal)
 include 'config.php';
+if (!esAdministrador()) {
+    header("Location: login.php");
+    exit();
+}
 include 'header.php';
 
 // Iniciamos una variable "$socio" con el texto null que significa "nada" o vacía.

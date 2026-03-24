@@ -17,7 +17,7 @@ include 'header.php';
       </div>
       <div class="col-auto">
         <!-- Botón que lleva al formulario para inscribir un nuevo socio -->
-        <a href="/RepoSayagym/primeraparte/nuevoSocio.php" class="btn btn-red">
+        <a href="nuevoSocio.php" class="btn btn-red">
           <i class="ti ti-user-plus"></i> Nuevo Socio
         </a>
       </div>
@@ -58,9 +58,9 @@ include 'header.php';
             <?php
 // Preparamos nuestra orden de SQL (consulta a la base de datos)
 // JOIN nos permite traer datos de otras tablas usando IDs en común
-$sql = "SELECT s.*, m.nombre as plan, e.nombre as nombre_profe 
+$sql = "SELECT s.*, COALESCE(m.nombre, 'Sin plan') as plan, e.nombre as nombre_profe 
                     FROM socios s 
-                    JOIN membresias m ON s.id_membresia = m.id_membresia 
+                    LEFT JOIN membresias m ON s.id_membresia = m.id_membresia 
                     LEFT JOIN entrenadores e ON s.id_entrenador = e.id_entrenador
                     ORDER BY s.id_socio DESC";
 
@@ -158,12 +158,12 @@ while ($row = $res->fetch_assoc()) {
               <td>
                 <div class="btn-list">
                   <!-- Botón Editar que manda el "id_socio" por la URL al darle click -->
-                  <a href="/RepoSayagym/primeraparte/editarSocio.php?id=<?php echo $row['id_socio']; ?>" class="btn btn-icon edit" title="Editar este registro">
+                  <a href="editarSocio.php?id=<?php echo $row['id_socio']; ?>" class="btn btn-icon edit" title="Editar este registro">
                     <i class="ti ti-edit"></i>
                   </a>
                   
                   <!-- Botón Eliminar que igual manda el ID por la URL, pero antes lanza una ventana emergente ("confirm") de JavaScript -->
-                  <a href="/RepoSayagym/primeraparte/eliminarSocio.php?id=<?php echo $row['id_socio']; ?>" 
+                  <a href="eliminarSocio.php?id=<?php echo $row['id_socio']; ?>" 
                      class="btn btn-icon" title="Eliminar registro"
                      onclick="return confirm('¿Estás totalmente seguro de que quieres eliminar a este socio del sistema?');">
                     <i class="ti ti-trash"></i>

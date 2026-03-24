@@ -3,13 +3,13 @@
 // Incluimos el archivo de configuración para poder conectarnos a la base de datos
 include 'config.php';
 
-// Incluimos el encabezado de la página (esto carga el menú y el diseño principal HTML)
+// Incluimos el encabezado de la página
 include 'header.php';
 
 // Si es socio, no deberia ver este panel. Lo redirigimos a su perfil.
 if (esSocio()) {
-    echo "<script>window.location='inicioSocio.php';</script>";
-    exit();
+  echo "<script>window.location='inicioSocio.php';</script>";
+  exit();
 }
 
 // Guardamos la fecha de hoy en formato Año-Mes-Día para usarla en nuestros cálculos después
@@ -42,7 +42,7 @@ $total_entrenadores = $consulta_entrenadores->fetch_assoc()['total'];
 
 // Obtenemos los últimos 5 socios que se inscribieron
 // También "unimos" la tabla de membresías (usando JOIN) para saber el nombre de su plan
-$recientes = $conexion->query("SELECT s.*, m.nombre as plan FROM socios s JOIN membresias m ON s.id_membresia = m.id_membresia ORDER BY s.id_socio DESC LIMIT 5");
+$recientes = $conexion->query("SELECT s.*, COALESCE(m.nombre, 'Sin plan') as plan FROM socios s LEFT JOIN membresias m ON s.id_membresia = m.id_membresia ORDER BY s.id_socio DESC LIMIT 5");
 
 // Calculamos cuál será la fecha dentro de 7 días exactos
 // Esto nos sirve para saber a qué personas se les va a vencer la membresía muy pronto

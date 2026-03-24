@@ -1,6 +1,10 @@
 <?php
 // Incluimos la configuración para conectar a la base de datos
 include 'config.php';
+if (!esAdministrador()) {
+    header("Location: login.php");
+    exit();
+}
 
 // Verificamos si se envió un ID (identificador) por la URL
 if (isset($_GET['id'])) {
