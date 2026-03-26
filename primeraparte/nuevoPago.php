@@ -53,6 +53,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $stmt_update = $conexion->prepare("UPDATE socios SET id_membresia = ?, fecha_vencimiento = ?, estado = 'activo' WHERE id_socio = ?");
             $stmt_update->bind_param("isi", $id_membresia, $nueva_fecha, $id_socio);
             $stmt_update->execute();
+
+            // Registrar en historial de membresías
+            $id_pago_nuevo = $conexion->insert_id ?: $stmt_pago->insert_id;
+            $conexion->query("INSERT INTO socios_membresias (id_socio, id_membresia, fecha_inicio, fecha_fin, estado, id_pago)
+                              VALUES ($id_socio, $id_membresia, CURDATE(), '$nueva_fecha', 'activa', LAST_INSERT_ID())");
             
             $mensaje = "<div class='alert alert-success'>Pago registrado y membresía actualizada correctamente. ¡Renovado hasta el ".date('d/m/Y', strtotime($nueva_fecha))."!</div>";
         } else {

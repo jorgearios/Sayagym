@@ -1,13 +1,3 @@
-<?php
-// Incluir auth si no fue cargado aún (protección por si config.php no lo incluye)
-if (!function_exists('esAdministrador')) {
-    include_once 'auth.php';
-}
-// Crear carpeta de imágenes si no existe
-if (!is_dir('imagenes')) {
-    mkdir('imagenes', 0755, true);
-}
-?>
 <!doctype html>
 <html lang="es">
 <head>
@@ -130,7 +120,7 @@ if (!is_dir('imagenes')) {
             opacity: 0.7;
             transition: transform 0.2s;
         }
-        .nav-item-drop:hover .drop-arrow {
+        .nav-item-drop.open .drop-arrow {
             transform: rotate(180deg);
         }
 
@@ -160,7 +150,7 @@ if (!is_dir('imagenes')) {
         }
         .dropdown-menu a i { color: var(--red); font-size: 0.95rem; }
         .dropdown-menu a:hover { background: #FEF2F2; color: var(--red); }
-        .nav-item-drop:hover .dropdown-menu { display: block; }
+        .nav-item-drop.open .dropdown-menu { display: block; }
 
         /* User badge */
         .gym-user-badge {
@@ -361,7 +351,6 @@ if (!is_dir('imagenes')) {
         .badge-blue    { background: #DBEAFE; color: var(--blue); }
         .badge-purple  { background: #EDE9FE; color: #6D28D9; }
         .badge-gray    { background: #F3F4F6; color: #374151; }
-        .badge-secondary { background: #F3F4F6; color: #6B7280; }
 
         /* ─── FORM CONTROLS ───────────────────────────── */
         .form-label {
@@ -546,35 +535,45 @@ if (!is_dir('imagenes')) {
 
         <!-- Logo Badge -->
         <a href="index.php" class="gym-brand-badge">
-            <img src="../Sayagym%20logo.png" alt="Sayagym Logo" class="gym-logo-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-            <span style="display:none; font-family:'Oswald',sans-serif; font-size:1.3rem; font-weight:700; color:#fff; letter-spacing:2px; padding:0 8px;">SAYAGYM</span>
+            <img src="../Sayagym%20logo.png" alt="Sayagym Logo" class="gym-logo-img">
         </a>
 
         <!-- Nav Items -->
         <ul class="gym-nav">
             <li class="nav-item-drop">
                 <a href="index.php" class="nav-link-drop">
-                    <i class="ti ti-layout-dashboard"></i>
                     Inicio
                 </a>
             </li>
             <?php if (esAdministrador()): ?>
             <li class="nav-item-drop">
                 <a href="#" class="nav-link-drop has-drop">
-                    <i class="ti ti-users"></i>
                     Administración
                     <i class="ti ti-chevron-down drop-arrow"></i>
                 </a>
                 <div class="dropdown-menu">
-                    <a href="socios.php"><i class="ti ti-user"></i> Socios</a>
-                    <a href="entrenadores.php"><i class="ti ti-barbell"></i> Entrenadores</a>
-                    <a href="membresias.php"><i class="ti ti-calendar-event"></i> Membresías</a>
+                    <a href="socios.php">Socios</a>
+                    <a href="entrenadores.php">Entrenadores</a>
+                    <a href="gestionMembresias.php">Planes de Membresía</a>
+                    <a href="membresias.php">Estado Membresías</a>
+                    <a href="acceso.php">Control de Acceso</a>
                 </div>
             </li>
-            
+
+            <li class="nav-item-drop">
+                <a href="#" class="nav-link-drop has-drop">
+                    Entrenamiento
+                    <i class="ti ti-chevron-down drop-arrow"></i>
+                </a>
+                <div class="dropdown-menu">
+                    <a href="rutinas.php">Rutinas</a>
+                    <a href="ejercicios.php">Ejercicios</a>
+                    <a href="evaluaciones.php">Evaluaciones Físicas</a>
+                </div>
+            </li>
+
             <li class="nav-item-drop">
                 <a href="pagos.php" class="nav-link-drop">
-                    <i class="ti ti-cash"></i>
                     Caja y Pagos
                 </a>
             </li>
@@ -592,10 +591,43 @@ if (!is_dir('imagenes')) {
                     <i class="ti ti-chevron-down" style="font-size:0.75rem; opacity:0.6;"></i>
                 </div>
                 <div class="dropdown-menu" style="right:0; left:auto; min-width:150px;">
-                    <a href="logout.php"><i class="ti ti-logout text-red"></i> Cerrar Sesión</a>
+                    <a href="logout.php">Cerrar Sesión</a>
                 </div>
             </li>
         </ul>
 
     </div>
 </nav>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const dropdownContainers = document.querySelectorAll('.nav-item-drop');
+    
+    dropdownContainers.forEach(container => {
+        const trigger = container.querySelector('.has-drop, .gym-user-badge');
+        if (trigger) {
+            trigger.addEventListener('click', function(e) {
+                if (trigger.tagName === 'A' && trigger.getAttribute('href') === '#') {
+                    e.preventDefault();
+                }
+                const isOpen = container.classList.contains('open');
+                
+                // Close all
+                document.querySelectorAll('.nav-item-drop').forEach(c => c.classList.remove('open'));
+                
+                // Toggle current
+                if (!isOpen) {
+                    container.classList.add('open');
+                }
+            });
+        }
+    });
+
+    // Close when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.nav-item-drop')) {
+            document.querySelectorAll('.nav-item-drop').forEach(c => c.classList.remove('open'));
+        }
+    });
+});
+</script>

@@ -67,18 +67,19 @@ if ($_POST) {
   }
 
   // === GUARDAMOS AL NUEVO SOCIO ===
-  // Preparamos nuestra orden INSERT INTO (Insertar en la tabla "socios" todos los Valores recopilados)
-  $sql = "INSERT INTO socios (nombre, apellido, telefono, contacto_emergencia, correo, direccion, fecha_nacimiento, fecha_registro, fecha_vencimiento, id_membresia, id_entrenador, estado, foto) 
-            VALUES ('$nom', '$ape', '$tel', '$tel_e', '$cor', '$dir', '$f_nac', '$f_reg', '$f_ven', $id_mem, $id_ent, 'activo', '$foto_path')";
+  // Generar código QR único
+  $qr_codigo = 'SGY-' . strtoupper(bin2hex(random_bytes(5)));
 
-  // Ejecutamos la orden SQL
+  $sql = "INSERT INTO socios (nombre, apellido, telefono, contacto_emergencia, correo, direccion, fecha_nacimiento, fecha_registro, fecha_vencimiento, id_membresia, id_entrenador, estado, foto, qr_codigo) 
+            VALUES ('$nom', '$ape', '$tel', '$tel_e', '$cor', '$dir', '$f_nac', '$f_reg', '$f_ven', $id_mem, $id_ent, 'activo', '$foto_path', '$qr_codigo')";
+
   if ($conexion->query($sql)) {
-    // Si funcionó bien y guardó el registro, utilizamos un código JavaScript (script) para mandar al usuario la lista de socios
+    $id_nuevo_socio = $conexion->insert_id;
+    // Registrar en historial de membresías
+    $conexion->query("INSERT INTO socios_membresias (id_socio, id_membresia, fecha_inicio, fecha_fin, estado) VALUES ($id_nuevo_socio, $id_mem, '$f_reg', '$f_ven', 'activa')");
     echo "<script>window.location='socios.php';</script>";
-  // Alternativamente, se pudo usar header("Location: ...");
   }
   else {
-    // Si hay algún error grave, paramos la carga de la página (die) y mostramos cuál fue el error
     die("Error al guardar: " . $conexion->error);
   }
 }

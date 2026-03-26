@@ -79,11 +79,28 @@ if ($socio['estado'] == 'inactivo') {
         </div>
 
         <div class="col-md-6 mb-4">
-            <!-- Espacio reservado para cosas futuras del socio, como rutinas, métricas o código QR -->
-            <div class="card h-100" style="display:flex; align-items:center; justify-content:center; flex-direction:column; background:#F9FAFB; border:2px dashed var(--border);">
-                <i class="ti ti-qrcode" style="font-size:4rem; color:var(--muted); margin-bottom:16px;"></i>
-                <div style="font-weight:600; color:var(--text);">Mi Código de Acceso</div>
-                <div style="font-size:0.85rem; color:var(--muted);">Muestra esto en recepción para entrar.</div>
+            <!-- QR Code de Acceso -->
+            <div class="card h-100">
+                <div class="card-header gray">
+                    <span class="card-title">Mi Código QR de Acceso</span>
+                </div>
+                <div class="card-body" style="display:flex; flex-direction:column; align-items:center; justify-content:center; padding:28px;">
+                    <?php
+                    // Generar qr_codigo si el socio no tiene uno
+                    if (empty($socio['qr_codigo'])) {
+                        $qr_code = 'SGY-' . $socio['id_socio'] . '-' . strtoupper(bin2hex(random_bytes(4)));
+                        $conexion->query("UPDATE socios SET qr_codigo='$qr_code' WHERE id_socio={$socio['id_socio']}");
+                        $socio['qr_codigo'] = $qr_code;
+                    }
+                    ?>
+                    <div id="qrcode" style="margin-bottom:16px;"></div>
+                    <p style="font-family:'Oswald',sans-serif; font-size:1rem; font-weight:600; color:var(--text); letter-spacing:2px; margin-bottom:4px;">
+                        <?php echo htmlspecialchars($socio['qr_codigo']); ?>
+                    </p>
+                    <p style="font-size:0.8rem; color:var(--muted); text-align:center;">
+                        Muestra este código en recepción para registrar tu entrada al gimnasio.
+                    </p>
+                </div>
             </div>
         </div>
     </div>
@@ -92,3 +109,12 @@ if ($socio['estado'] == 'inactivo') {
 </div>
 
 <?php include 'footer.php'; ?>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+new QRCode(document.getElementById("qrcode"), {
+    text: "<?php echo htmlspecialchars($socio['qr_codigo'], ENT_QUOTES); ?>",
+    width: 160, height: 160,
+    colorDark: "#1A1A1A", colorLight: "#ffffff",
+    correctLevel: QRCode.CorrectLevel.M
+});
+</script>
