@@ -1,43 +1,48 @@
 <?php
 include 'config.php';
-if (!esAdministrador()) { header("Location: login.php"); exit(); }
+if (!esAdministrador()) {
+  header("Location: login.php");
+  exit();
+}
 include 'header.php';
 
 // ── DELETE ───────────────────────────────────────────────
 if (isset($_GET['eliminar'])) {
-    $id = (int)$_GET['eliminar'];
-    $uso = $conexion->query("SELECT COUNT(*) as t FROM rutina_ejercicio WHERE id_ejercicio=$id")->fetch_assoc()['t'];
-    if ($uso > 0) {
-        $msg = "<div class='alert alert-danger'>No se puede eliminar: este ejercicio está en uso en $uso rutina(s).</div>";
-    } else {
-        $conexion->query("DELETE FROM ejercicios WHERE id_ejercicio=$id");
-        echo "<script>window.location='ejercicios.php?res=eliminado';</script>"; exit;
-    }
+  $id = (int) $_GET['eliminar'];
+  $uso = $conexion->query("SELECT COUNT(*) as t FROM rutina_ejercicio WHERE id_ejercicio=$id")->fetch_assoc()['t'];
+  if ($uso > 0) {
+    $msg = "<div class='alert alert-danger'>No se puede eliminar: este ejercicio está en uso en $uso rutina(s).</div>";
+  } else {
+    $conexion->query("DELETE FROM ejercicios WHERE id_ejercicio=$id");
+    echo "<script>window.location='ejercicios.php?res=eliminado';</script>";
+    exit;
+  }
 }
 
 // ── CREATE / UPDATE ──────────────────────────────────────
 if ($_POST) {
-    $nom  = $conexion->real_escape_string($_POST['nombre']);
-    $grup = $conexion->real_escape_string($_POST['grupo_muscular']);
-    $desc = $conexion->real_escape_string($_POST['descripcion']);
+  $nom = $conexion->real_escape_string($_POST['nombre']);
+  $grup = $conexion->real_escape_string($_POST['grupo_muscular']);
+  $desc = $conexion->real_escape_string($_POST['descripcion']);
 
-    if (!empty($_POST['id_ejercicio'])) {
-        $id = (int)$_POST['id_ejercicio'];
-        $conexion->query("UPDATE ejercicios SET nombre='$nom', grupo_muscular='$grup', descripcion='$desc' WHERE id_ejercicio=$id");
-    } else {
-        $conexion->query("INSERT INTO ejercicios (nombre, grupo_muscular, descripcion) VALUES ('$nom','$grup','$desc')");
-    }
-    echo "<script>window.location='ejercicios.php?res=guardado';</script>"; exit;
+  if (!empty($_POST['id_ejercicio'])) {
+    $id = (int) $_POST['id_ejercicio'];
+    $conexion->query("UPDATE ejercicios SET nombre='$nom', grupo_muscular='$grup', descripcion='$desc' WHERE id_ejercicio=$id");
+  } else {
+    $conexion->query("INSERT INTO ejercicios (nombre, grupo_muscular, descripcion) VALUES ('$nom','$grup','$desc')");
+  }
+  echo "<script>window.location='ejercicios.php?res=guardado';</script>";
+  exit;
 }
 
 // ── CARGAR PARA EDITAR ───────────────────────────────────
 $edit = null;
 if (isset($_GET['editar'])) {
-    $id   = (int)$_GET['editar'];
-    $edit = $conexion->query("SELECT * FROM ejercicios WHERE id_ejercicio=$id")->fetch_assoc();
+  $id = (int) $_GET['editar'];
+  $edit = $conexion->query("SELECT * FROM ejercicios WHERE id_ejercicio=$id")->fetch_assoc();
 }
 
-$grupos = ['Pecho','Espalda','Hombros','Bíceps','Tríceps','Antebrazos','Abdomen','Cuádriceps','Isquiotibiales','Glúteos','Pantorrillas','Cardio','Funcional','Otro'];
+$grupos = ['Pecho', 'Espalda', 'Hombros', 'Bíceps', 'Tríceps', 'Antebrazos', 'Abdomen', 'Cuádriceps', 'Isquiotibiales', 'Glúteos', 'Pantorrillas', 'Cardio', 'Funcional', 'Otro'];
 $ejercicios = $conexion->query("SELECT e.*, (SELECT COUNT(*) FROM rutina_ejercicio re WHERE re.id_ejercicio=e.id_ejercicio) as en_rutinas FROM ejercicios e ORDER BY grupo_muscular, nombre ASC");
 ?>
 
@@ -55,9 +60,11 @@ $ejercicios = $conexion->query("SELECT e.*, (SELECT COUNT(*) FROM rutina_ejercic
     </div>
 
     <?php if (isset($_GET['res'])): ?>
-    <div class="alert alert-success">✓ <?php echo $_GET['res']==='eliminado' ? 'Ejercicio eliminado.' : 'Ejercicio guardado correctamente.'; ?></div>
+      <div class="alert alert-success">✓
+        <?php echo $_GET['res'] === 'eliminado' ? 'Ejercicio eliminado.' : 'Ejercicio guardado correctamente.'; ?></div>
     <?php endif; ?>
-    <?php if (isset($msg)) echo $msg; ?>
+    <?php if (isset($msg))
+      echo $msg; ?>
 
     <div style="display:grid; grid-template-columns:1fr 360px; gap:20px; align-items:start;">
 
@@ -69,30 +76,43 @@ $ejercicios = $conexion->query("SELECT e.*, (SELECT COUNT(*) FROM rutina_ejercic
         <div class="table-responsive">
           <table class="gym-table">
             <thead>
-              <tr><th>Ejercicio</th><th>Grupo Muscular</th><th>En Rutinas</th><th>Acciones</th></tr>
+              <tr>
+                <th>Ejercicio</th>
+                <th>Grupo Muscular</th>
+                <th>En Rutinas</th>
+                <th>Acciones</th>
+              </tr>
             </thead>
             <tbody>
               <?php if ($ejercicios->num_rows === 0): ?>
-              <tr><td colspan="4" style="text-align:center;padding:30px;color:var(--muted);">No hay ejercicios aún. Agrega el primero.</td></tr>
+                <tr>
+                  <td colspan="4" style="text-align:center;padding:30px;color:var(--muted);">No hay ejercicios aún. Agrega
+                    el primero.</td>
+                </tr>
               <?php endif; ?>
               <?php while ($e = $ejercicios->fetch_assoc()): ?>
-              <tr>
-                <td>
-                  <div class="td-name"><?php echo htmlspecialchars($e['nombre']); ?></div>
-                  <?php if ($e['descripcion']): ?>
-                  <div class="td-muted small"><?php echo htmlspecialchars(substr($e['descripcion'],0,60)); ?><?php echo strlen($e['descripcion'])>60?'...':''; ?></div>
-                  <?php endif; ?>
-                </td>
-                <td><span class="badge badge-purple"><?php echo htmlspecialchars($e['grupo_muscular'] ?? '—'); ?></span></td>
-                <td class="td-muted"><?php echo $e['en_rutinas']; ?> rutina(s)</td>
-                <td>
-                  <div class="btn-list">
-                    <a href="ejercicios.php?editar=<?php echo $e['id_ejercicio']; ?>" class="btn btn-icon edit" title="Editar"><i class="ti ti-edit"></i></a>
-                    <a href="ejercicios.php?eliminar=<?php echo $e['id_ejercicio']; ?>" class="btn btn-icon" title="Eliminar"
-                       onclick="return confirm('¿Eliminar este ejercicio?');"><i class="ti ti-trash"></i></a>
-                  </div>
-                </td>
-              </tr>
+                <tr>
+                  <td>
+                    <div class="td-name"><?php echo htmlspecialchars($e['nombre']); ?></div>
+                    <?php if ($e['descripcion']): ?>
+                      <div class="td-muted small">
+                        <?php echo htmlspecialchars(substr($e['descripcion'], 0, 60)); ?>    <?php echo strlen($e['descripcion']) > 60 ? '...' : ''; ?>
+                      </div>
+                    <?php endif; ?>
+                  </td>
+                  <td><span class="badge badge-purple"><?php echo htmlspecialchars($e['grupo_muscular'] ?? '—'); ?></span>
+                  </td>
+                  <td class="td-muted"><?php echo $e['en_rutinas']; ?> rutina(s)</td>
+                  <td>
+                    <div class="btn-list">
+                      <a href="ejercicios.php?editar=<?php echo $e['id_ejercicio']; ?>" class="btn btn-icon edit"
+                        title="Editar"><i class="ti ti-edit"></i></a>
+                      <a href="ejercicios.php?eliminar=<?php echo $e['id_ejercicio']; ?>" class="btn btn-icon"
+                        title="Eliminar" onclick="return confirm('¿Eliminar este ejercicio?');"><i
+                          class="ti ti-trash"></i></a>
+                    </div>
+                  </td>
+                </tr>
               <?php endwhile; ?>
             </tbody>
           </table>
@@ -104,31 +124,34 @@ $ejercicios = $conexion->query("SELECT e.*, (SELECT COUNT(*) FROM rutina_ejercic
         <div class="card-header" style="background:linear-gradient(135deg,#4A148C,#7B1FA2);">
           <span class="card-title" style="color:#fff;">
             <i class="ti ti-<?php echo $edit ? 'edit' : 'plus'; ?> me-2"></i>
-            <?php echo $edit ? 'Editar: '.htmlspecialchars($edit['nombre']) : 'Nuevo Ejercicio'; ?>
+            <?php echo $edit ? 'Editar: ' . htmlspecialchars($edit['nombre']) : 'Nuevo Ejercicio'; ?>
           </span>
         </div>
         <div class="card-body">
           <?php if ($edit): ?>
-          <input type="hidden" name="id_ejercicio" value="<?php echo $edit['id_ejercicio']; ?>">
+            <input type="hidden" name="id_ejercicio" value="<?php echo $edit['id_ejercicio']; ?>">
           <?php endif; ?>
           <div style="display:flex; flex-direction:column; gap:14px;">
             <div>
               <label class="form-label">Nombre del Ejercicio</label>
               <input type="text" name="nombre" class="form-control" required placeholder="Ej. Press de banca"
-                     value="<?php echo $edit ? htmlspecialchars($edit['nombre']) : ''; ?>">
+                value="<?php echo $edit ? htmlspecialchars($edit['nombre']) : ''; ?>">
             </div>
             <div>
               <label class="form-label">Grupo Muscular</label>
               <select name="grupo_muscular" class="form-select">
                 <option value="">— Selecciona —</option>
                 <?php foreach ($grupos as $g): ?>
-                <option value="<?php echo $g; ?>" <?php if($edit && $edit['grupo_muscular']===$g) echo 'selected'; ?>><?php echo $g; ?></option>
+                  <option value="<?php echo $g; ?>" <?php if ($edit && $edit['grupo_muscular'] === $g)
+                       echo 'selected'; ?>>
+                    <?php echo $g; ?></option>
                 <?php endforeach; ?>
               </select>
             </div>
             <div>
               <label class="form-label">Descripción / Técnica</label>
-              <textarea name="descripcion" class="form-control" rows="3" placeholder="Descripción opcional del ejercicio..."><?php echo $edit ? htmlspecialchars($edit['descripcion']) : ''; ?></textarea>
+              <textarea name="descripcion" class="form-control" rows="3"
+                placeholder="Descripción opcional del ejercicio..."><?php echo $edit ? htmlspecialchars($edit['descripcion']) : ''; ?></textarea>
             </div>
           </div>
         </div>

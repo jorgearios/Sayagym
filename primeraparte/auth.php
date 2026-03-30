@@ -20,11 +20,13 @@ if (isset($_SESSION['usuario_id']) && $pagina_actual === 'login.php') {
     exit();
 }
 
-function esAdministrador() {
+function esAdministrador()
+{
     return isset($_SESSION['rol']) && $_SESSION['rol'] === 'Administrador';
 }
 
-function esSocio() {
+function esSocio()
+{
     return isset($_SESSION['rol']) && $_SESSION['rol'] === 'Socio';
 }
 ?>

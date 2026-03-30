@@ -40,41 +40,45 @@ include 'header.php';
           </thead>
           <tbody>
             <?php
-$res = $conexion->query("SELECT s.*, m.nombre as plan FROM socios s JOIN membresias m ON s.id_membresia = m.id_membresia ORDER BY s.fecha_vencimiento ASC");
-while ($row = $res->fetch_assoc()):
-  $vence = strtotime($row['fecha_vencimiento']);
-  $hoy = strtotime(date('Y-m-d'));
-  $expired = ($hoy > $vence);
-  if ($row['estado'] == 'inactivo') {
-    $status_class = 'badge-secondary';
-    $status_text = 'INACTIVA';
-  }
-  else if ($expired) {
-    $status_class = 'badge-red';
-    $status_text = 'VENCIDA';
-  }
-  else {
-    $status_class = 'badge-green';
-    $status_text = 'ACTIVA';
-  }
-?>
-            <tr>
-              <td class="td-name"><?php echo $row['nombre'] . " " . $row['apellido']; ?></td>
-              <td><span class="badge badge-blue"><?php echo $row['plan']; ?></span></td>
-              <td class="td-muted"><?php echo date('d M Y', strtotime($row['fecha_registro'])); ?></td>
-              <td>
-                <span class="<?php echo $expired ? 'text-red' : 'text-green'; ?> fw-bold small">
-                  <?php echo date('d M Y', $vence); ?>
-                </span>
-              </td>
-              <td>
-                <span class="badge <?php echo $status_class; ?>">
-                  <?php echo $status_text; ?>
-                </span>
-              </td>
-            </tr>
-            <?php
-endwhile; ?>
+            $res = $conexion->query("SELECT s.*, COALESCE(m.nombre, 'Sin plan') as plan FROM socios s LEFT JOIN membresias m ON s.id_membresia = m.id_membresia ORDER BY s.fecha_vencimiento ASC");
+            if ($res && $res->num_rows > 0):
+              while ($row = $res->fetch_assoc()):
+                $vence = strtotime($row['fecha_vencimiento']);
+                $hoy = strtotime(date('Y-m-d'));
+                $expired = ($hoy > $vence);
+                if ($row['estado'] == 'inactivo') {
+                  $status_class = 'badge-secondary';
+                  $status_text = 'INACTIVA';
+                } else if ($expired) {
+                  $status_class = 'badge-red';
+                  $status_text = 'VENCIDA';
+                } else {
+                  $status_class = 'badge-green';
+                  $status_text = 'ACTIVA';
+                }
+                ?>
+                <tr>
+                  <td class="td-name"><?php echo $row['nombre'] . " " . $row['apellido']; ?></td>
+                  <td><span class="badge badge-blue"><?php echo $row['plan']; ?></span></td>
+                  <td class="td-muted"><?php echo date('d M Y', strtotime($row['fecha_registro'])); ?></td>
+                  <td>
+                    <span class="<?php echo $expired ? 'text-red' : 'text-green'; ?> fw-bold small">
+                      <?php echo date('d M Y', $vence); ?>
+                    </span>
+                  </td>
+                  <td>
+                    <span class="badge <?php echo $status_class; ?>">
+                      <?php echo $status_text; ?>
+                    </span>
+                  </td>
+                </tr>
+                <?php
+              endwhile;
+            else: ?>
+              <tr>
+                <td colspan="5" style="text-align:center;color:#9CA3AF;padding:20px;">No se encontraron registros.</td>
+              </tr>
+            <?php endif; ?>
           </tbody>
         </table>
       </div>

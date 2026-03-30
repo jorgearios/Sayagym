@@ -1,77 +1,80 @@
 <?php
-// login.php - Página de inicio de sesión auto-detectiva
-session_start();
+// login.php
+// NO llamar session_start() aquí — lo maneja config.php → auth.php
 include 'config.php';
 
 $error = "";
 
-// Si el usuario ya está conectado, ver qué dashboard le toca
+// Ya hay sesión activa → redirigir al dashboard correcto
 if (isset($_SESSION['usuario_id'])) {
     if ($_SESSION['rol'] === 'Administrador') {
         header("Location: index.php");
-    }
-    else {
+    } else {
         header("Location: inicioSocio.php");
     }
     exit();
 }
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $identificador = $_POST['identificador'];
-    $password = $_POST['password'];
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $identificador = trim($_POST['identificador'] ?? '');
+    $password_raw  = $_POST['password'] ?? '';
 
-    // 1. Intentar como Administrador
-    $stmt_admin = $conexion->prepare("SELECT id_usuario, nombre_completo, password, rol FROM usuarios WHERE usuario = ? AND estado = 'activo'");
+    // ── 1. Buscar en tabla usuarios (admin, recepción, etc.) ──
+    // Backticks en `password` para evitar conflicto con palabra reservada MySQL
+    $stmt = $conexion->prepare(
+        "SELECT id_usuario, nombre_completo, `password`, rol
+         FROM usuarios
+         WHERE usuario = ? AND estado = 'activo'
+         LIMIT 1"
+    );
 
-    if ($stmt_admin) {
-        $stmt_admin->bind_param("s", $identificador);
-        $stmt_admin->execute();
-        $res_admin = $stmt_admin->get_result();
-        $row = $res_admin->fetch_assoc();
+    $row_admin = null;
+    if ($stmt) {
+        $stmt->bind_param("s", $identificador);
+        $stmt->execute();
+        $row_admin = $stmt->get_result()->fetch_assoc();
+        $stmt->close();
     }
-    else {
-        $row = null;
-    }
 
-    if ($row) {
-        if (password_verify($password, $row['password'])) {
-            $_SESSION['usuario_id'] = $row['id_usuario'];
-            $_SESSION['nombre'] = $row['nombre_completo'];
-            $_SESSION['rol'] = 'Administrador';
+    if ($row_admin) {
+        if (password_verify($password_raw, $row_admin['password'])) {
+            $_SESSION['usuario_id'] = $row_admin['id_usuario'];
+            $_SESSION['nombre']     = $row_admin['nombre_completo'];
+            $_SESSION['rol']        = 'Administrador';
             header("Location: index.php");
             exit();
-        }
-        else {
+        } else {
             $error = "Contraseña incorrecta.";
         }
-    }
-    else {
-        // 2. Intentar como Socio (por correo)
-        $stmt_socio = $conexion->prepare("SELECT id_socio, nombre, apellido, password FROM socios WHERE correo = ? AND estado != 'inactivo'");
 
-        if ($stmt_socio) {
-            $stmt_socio->bind_param("s", $identificador);
-            $stmt_socio->execute();
-            $res_socio = $stmt_socio->get_result();
-            $row_socio = $res_socio->fetch_assoc();
-        }
-        else {
-            $row_socio = null;
+    } else {
+        // ── 2. Buscar en tabla socios (por correo) ──
+        $stmt2 = $conexion->prepare(
+            "SELECT id_socio, nombre, apellido, `password`
+             FROM socios
+             WHERE correo = ? AND estado != 'inactivo'
+             LIMIT 1"
+        );
+
+        $row_socio = null;
+        if ($stmt2) {
+            $stmt2->bind_param("s", $identificador);
+            $stmt2->execute();
+            $row_socio = $stmt2->get_result()->fetch_assoc();
+            $stmt2->close();
         }
 
         if ($row_socio) {
-            if (password_verify($password, $row_socio['password'])) {
+            if (password_verify($password_raw, $row_socio['password'])) {
                 $_SESSION['usuario_id'] = $row_socio['id_socio'];
-                $_SESSION['nombre'] = $row_socio['nombre'] . ' ' . $row_socio['apellido'];
-                $_SESSION['rol'] = 'Socio';
+                $_SESSION['nombre']     = $row_socio['nombre'] . ' ' . $row_socio['apellido'];
+                $_SESSION['rol']        = 'Socio';
                 header("Location: inicioSocio.php");
                 exit();
-            }
-            else {
+            } else {
                 $error = "Contraseña incorrecta.";
             }
-        }
-        else {
+        } else {
             $error = "Usuario o correo no encontrado, o cuenta inactiva.";
         }
     }
@@ -83,23 +86,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>Sayagym | Iniciar Sesión</title>
-    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
-
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         :root {
-            --red: #B71C1C;
-            --red-dark: #7F0000;
-            --bg: #F0F0F0;
-            --card: #FFFFFF;
-            --text: #1A1A1A;
-            --muted: #6B7280;
-            --border: #E5E7EB;
-            --radius: 8px;
+            --red: #B71C1C; --red-dark: #7F0000;
+            --bg: #F0F0F0; --card: #FFFFFF;
+            --text: #1A1A1A; --muted: #6B7280;
+            --border: #E5E7EB; --radius: 8px;
             --shadow: 0 4px 20px rgba(0,0,0,0.08);
         }
         body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; align-items: center; justify-content: center; }
@@ -119,34 +116,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </style>
 </head>
 <body>
-
 <div class="login-container">
     <div class="login-card">
         <div class="login-header">
-            <img src="../Sayagym%20logo.png" alt="Sayagym Logo">
+            <img src="../Sayagym%20logo.png" alt="Sayagym Logo" onerror="this.style.display='none'">
             <h1 class="login-title">Bienvenido a Sayagym</h1>
         </div>
         <div class="login-body">
-            
-            <?php if ($error !== "") { ?>
+            <?php if ($error !== ""): ?>
                 <div class="alert"><i class="ti ti-alert-circle me-1"></i> <?php echo $error; ?></div>
-            <?php
-}?>
-
+            <?php endif; ?>
             <form action="login.php" method="POST">
-                
-                <label class="form-label">Usuario o Correo Eléctronico</label>
-                <input type="text" name="identificador" class="form-control" placeholder="Ej. correo@mail.com o admin" required>
-                
+                <label class="form-label">Usuario o Correo Electrónico</label>
+                <input type="text" name="identificador" class="form-control" placeholder="Ej. admin" required autocomplete="username">
                 <label class="form-label">Contraseña</label>
-                <input type="password" name="password" class="form-control" placeholder="••••••••" required>
-                
+                <input type="password" name="password" class="form-control" placeholder="••••••••" required autocomplete="current-password">
                 <button type="submit" class="btn-login"><i class="ti ti-login"></i> Entrar al Sistema</button>
-
-                <div style="text-align: center; margin-top: 20px; font-size: 0.9rem;">
-                    <a href="registro.php" style="color: var(--red); text-decoration: none; font-weight: 600;">¿No tienes una cuenta? Regístrate aquí</a>
+                <div style="text-align:center; margin-top:20px; font-size:0.9rem;">
+                    <a href="registro.php" style="color:var(--red); text-decoration:none; font-weight:600;">¿No tienes una cuenta? Regístrate aquí</a>
                 </div>
-
             </form>
         </div>
         <div class="login-footer">
@@ -154,6 +142,5 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </div>
     </div>
 </div>
-
 </body>
 </html>
