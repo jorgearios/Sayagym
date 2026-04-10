@@ -5,10 +5,10 @@
 // BÓRRALO después de usarlo
 
 // Conexión directa sin incluir nada más
-$c = new mysqli('localhost', 'root', '', 'sistema_gym');
+$c = new mysqli('127.0.0.1', 'e11a5294076c2dca0c0117243bb6dcff951d5cb5da79f0ca', '', 'sistema_gym');
 if ($c->connect_error) {
     die("<h2 style='color:red;font-family:sans-serif'>
-    ❌ No se puede conectar a MySQL<br><br>
+    No se puede conectar a MySQL<br><br>
     Error: " . $c->connect_error . "<br><br>
     Verifica que XAMPP esté corriendo y que la BD 'sistema_gym' exista.
     </h2>");
