@@ -1,4 +1,10 @@
 <?php
+/**
+ * Archivo: problema.php
+ * Descripción: Página de registro de tickets, reportes o problemas para los usuarios.
+ * Parte del sistema integral de gestión Sayagym.
+ */
+
 // ver_problema.php
 // Sube este archivo a primeraparte/ y ábrelo en el navegador
 // Te muestra EXACTAMENTE por qué falla el login

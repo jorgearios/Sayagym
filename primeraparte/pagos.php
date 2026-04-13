@@ -1,4 +1,10 @@
 <?php
+/**
+ * Archivo: pagos.php
+ * Descripción: Histórico e historial de pagos registrados en el sistema.
+ * Parte del sistema integral de gestión Sayagym.
+ */
+
 // pagos.php - Gestión de Pagos y Caja
 include 'config.php';
 include 'header.php';

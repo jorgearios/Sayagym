@@ -1,4 +1,10 @@
 <?php
+/**
+ * Archivo: eliminarEntrenador.php
+ * Descripción: Script para gestionar la eliminación lógica o física de un entrenador.
+ * Parte del sistema integral de gestión Sayagym.
+ */
+
 // Primero traemos toda nuestra principal herramienta conectora a la matriz web local de bases de datos central 
 include 'config.php';
 if (!esAdministrador()) {

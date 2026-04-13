@@ -1,4 +1,10 @@
 <?php
+/**
+ * Archivo: miNutricion.php
+ * Descripción: Panel para que los socios vean su seguimiento nutricional y límite calórico.
+ * Parte del sistema integral de gestión Sayagym.
+ */
+
 include 'config.php';
 // Accesible para socios y admins
 if (!isset($_SESSION['usuario_id'])) {

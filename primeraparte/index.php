@@ -1,4 +1,10 @@
 <?php
+/**
+ * Archivo: index.php
+ * Descripción: Panel de control principal (Dashboard) para administradores.
+ * Parte del sistema integral de gestión Sayagym.
+ */
+
 
 // Incluimos el archivo de configuración para poder conectarnos a la base de datos
 include 'config.php';

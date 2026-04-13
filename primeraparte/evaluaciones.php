@@ -1,4 +1,10 @@
 <?php
+/**
+ * Archivo: evaluaciones.php
+ * Descripción: Módulo para visualizar las evaluaciones físicas de los socios.
+ * Parte del sistema integral de gestión Sayagym.
+ */
+
 include 'config.php';
 if (!esAdministrador()) {
   header("Location: login.php");

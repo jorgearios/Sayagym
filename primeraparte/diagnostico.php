@@ -1,4 +1,10 @@
 <?php
+/**
+ * Archivo: diagnostico.php
+ * Descripción: Panel para diagnósticos básicos y métricas de salud del socio.
+ * Parte del sistema integral de gestión Sayagym.
+ */
+
 // diagnostico.php
 // Sube este archivo al servidor, ábrelo en el navegador, copia el resultado
 // ELIMÍNALO DESPUÉS de usarlo — no dejarlo en producción

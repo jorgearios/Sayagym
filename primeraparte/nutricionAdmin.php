@@ -1,4 +1,10 @@
 <?php
+/**
+ * Archivo: nutricionAdmin.php
+ * Descripción: Panel del administrador o nutricionista para gestionar dietas y metas calóricas.
+ * Parte del sistema integral de gestión Sayagym.
+ */
+
 include 'config.php';
 if (!esAdministrador()) {
   header("Location: login.php");

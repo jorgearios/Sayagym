@@ -1,4 +1,10 @@
 <?php
+/**
+ * Archivo: editarRutina.php
+ * Descripción: Formulario y lógica para modificar una rutina de ejercicios.
+ * Parte del sistema integral de gestión Sayagym.
+ */
+
 include 'config.php';
 if (!esAdministrador()) {
   header("Location: login.php");

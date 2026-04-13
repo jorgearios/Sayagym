@@ -1,4 +1,10 @@
 <?php
+/**
+ * Archivo: editarEntrenador.php
+ * Descripción: Formulario y lógica para modificar los datos de un entrenador existente.
+ * Parte del sistema integral de gestión Sayagym.
+ */
+
 // 1. Configuraciones previas y cabeceras operativas del visual y conexion base de datos
 include 'config.php';
 if (!esAdministrador()) {

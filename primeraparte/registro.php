@@ -1,4 +1,10 @@
 <?php
+/**
+ * Archivo: registro.php
+ * Descripción: Página pública de auto-registro para posibles clientes o usuarios nuevos.
+ * Parte del sistema integral de gestión Sayagym.
+ */
+
 // registro.php - Registro de Nuevos Socios
 session_start();
 include 'config.php';

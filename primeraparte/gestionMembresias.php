@@ -1,4 +1,10 @@
 <?php
+/**
+ * Archivo: gestionMembresias.php
+ * Descripción: Creación, edición y administración de los planes de membresías.
+ * Parte del sistema integral de gestión Sayagym.
+ */
+
 include 'config.php';
 if (!esAdministrador()) {
   header("Location: login.php");

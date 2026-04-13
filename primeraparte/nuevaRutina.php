@@ -1,4 +1,10 @@
 <?php
+/**
+ * Archivo: nuevaRutina.php
+ * Descripción: Generación y registro de nuevas agrupaciones de rutinas.
+ * Parte del sistema integral de gestión Sayagym.
+ */
+
 include 'config.php';
 if (!esAdministrador()) {
   header("Location: login.php");

@@ -1,4 +1,10 @@
 <?php
+/**
+ * Archivo: membresias.php
+ * Descripción: Listado del estado de las membresías adquiridas por los socios.
+ * Parte del sistema integral de gestión Sayagym.
+ */
+
 
 include 'config.php';
 include 'header.php';

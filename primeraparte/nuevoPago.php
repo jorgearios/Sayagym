@@ -1,4 +1,10 @@
 <?php
+/**
+ * Archivo: nuevoPago.php
+ * Descripción: Registro de ingresos por membresías u otros conceptos financieros.
+ * Parte del sistema integral de gestión Sayagym.
+ */
+
 // nuevoPago.php - Formulario para cobrar y procesar pagos
 include 'config.php';
 include 'header.php';
@@ -31,37 +37,40 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $stmt_pago = $conexion->prepare("INSERT INTO pagos (id_socio, id_membresia, monto, metodo_pago, referencia, estado) VALUES (?, ?, ?, ?, ?, 'pagado')");
     $stmt_pago->bind_param("iidss", $id_socio, $id_membresia, $monto, $metodo_pago, $referencia);
 
-    if ($stmt_pago->execute()) {
-      // 2. Actualizamos la vigencia del socio
-      // Primero, vemos si actualmente ya tiene fecha de vencimiento y si aún le sirve
-      $stmt_socio = $conexion->prepare("SELECT fecha_vencimiento FROM socios WHERE id_socio = ?");
-      $stmt_socio->bind_param("i", $id_socio);
-      $stmt_socio->execute();
-      $datos_socio = $stmt_socio->get_result()->fetch_assoc();
+    $conexion->begin_transaction();
+    try {
+      if ($stmt_pago->execute()) {
+        // 2. Actualizamos la vigencia del socio
+        // Primero, vemos si actualmente ya tiene fecha de vencimiento y si aún le sirve
+        $stmt_socio = $conexion->prepare("SELECT fecha_vencimiento FROM socios WHERE id_socio = ?");
+        $stmt_socio->bind_param("i", $id_socio);
+        $stmt_socio->execute();
+        $datos_socio = $stmt_socio->get_result()->fetch_assoc();
 
-      $hoy = date('Y-m-d');
-      $fecha_base = $hoy; // Por defecto es a partir de hoy
-      if ($datos_socio['fecha_vencimiento'] > $hoy) {
-        // Si aún tiene días a favor, le sumamos a esa fecha
-        $fecha_base = $datos_socio['fecha_vencimiento'];
+        $hoy = date('Y-m-d');
+        $fecha_base = $hoy; // Por defecto es a partir de hoy
+        if ($datos_socio['fecha_vencimiento'] > $hoy) {
+          // Si aún tiene días a favor, le sumamos a esa fecha
+          $fecha_base = $datos_socio['fecha_vencimiento'];
+        }
+
+        // Calculamos la nueva fecha sumándole los meses de la membresía contratada
+        $nueva_fecha = date('Y-m-d', strtotime("+$meses months", strtotime($fecha_base)));
+
+        // Hacemos el UPDATE en la tabla de socios
+        $stmt_update = $conexion->prepare("UPDATE socios SET id_membresia = ?, fecha_vencimiento = ?, estado = 'activo' WHERE id_socio = ?");
+        $stmt_update->bind_param("isi", $id_membresia, $nueva_fecha, $id_socio);
+        $stmt_update->execute();
+
+        $conexion->commit();
+        $mensaje = "<div class='alert alert-success'>Pago registrado y membresía actualizada correctamente. ¡Renovado hasta el " . date('d/m/Y', strtotime($nueva_fecha)) . "!</div>";
+      } else {
+        $conexion->rollback();
+        $mensaje = "<div class='alert alert-danger'>Error al registrar el pago: " . $conexion->error . "</div>";
       }
-
-      // Calculamos la nueva fecha sumándole los meses de la membresía contratada
-      $nueva_fecha = date('Y-m-d', strtotime("+$meses months", strtotime($fecha_base)));
-
-      // Hacemos el UPDATE en la tabla de socios
-      $stmt_update = $conexion->prepare("UPDATE socios SET id_membresia = ?, fecha_vencimiento = ?, estado = 'activo' WHERE id_socio = ?");
-      $stmt_update->bind_param("isi", $id_membresia, $nueva_fecha, $id_socio);
-      $stmt_update->execute();
-
-      // Registrar en historial de membresías
-      $id_pago_nuevo = $conexion->insert_id ?: $stmt_pago->insert_id;
-      $conexion->query("INSERT INTO socios_membresias (id_socio, id_membresia, fecha_inicio, fecha_fin, estado, id_pago)
-                              VALUES ($id_socio, $id_membresia, CURDATE(), '$nueva_fecha', 'activa', LAST_INSERT_ID())");
-
-      $mensaje = "<div class='alert alert-success'>Pago registrado y membresía actualizada correctamente. ¡Renovado hasta el " . date('d/m/Y', strtotime($nueva_fecha)) . "!</div>";
-    } else {
-      $mensaje = "<div class='alert alert-danger'>Error al registrar el pago: " . $conexion->error . "</div>";
+    } catch (Exception $e) {
+      $conexion->rollback();
+      $mensaje = "<div class='alert alert-danger'>Error: " . $e->getMessage() . "</div>";
     }
   }
 }

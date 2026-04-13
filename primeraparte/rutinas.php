@@ -1,4 +1,10 @@
 <?php
+/**
+ * Archivo: rutinas.php
+ * Descripción: Gestor general del listado y asignaciones de rutinas de ejercicio.
+ * Parte del sistema integral de gestión Sayagym.
+ */
+
 include 'config.php';
 if (!esAdministrador()) {
   header("Location: login.php");

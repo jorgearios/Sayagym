@@ -1,4 +1,10 @@
 <?php
+/**
+ * Archivo: gestionAlimentos.php
+ * Descripción: Administración del catálogo de alimentos para el módulo de nutrición.
+ * Parte del sistema integral de gestión Sayagym.
+ */
+
 include 'config.php';
 if (!esAdministrador()) {
   header("Location: login.php");

@@ -1,4 +1,10 @@
 <?php
+/**
+ * Archivo: entrenadores.php
+ * Descripción: Listado principal y administración general de entrenadores.
+ * Parte del sistema integral de gestión Sayagym.
+ */
+
 
 // 1. Incluimos la conexión a la base de datos
 include 'config.php';

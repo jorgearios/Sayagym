@@ -1,4 +1,10 @@
 <?php
+/**
+ * Archivo: editarSocio.php
+ * Descripción: Formulario y lógica para modificar los datos de un socio registrado.
+ * Parte del sistema integral de gestión Sayagym.
+ */
+
 // === INICIO DEL PROGRAMA ===
 // Incluimos nuestro archivo de configuración (conexión) y la cabecera del sitio (HTML principal)
 include 'config.php';

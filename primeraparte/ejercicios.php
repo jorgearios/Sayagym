@@ -1,4 +1,10 @@
 <?php
+/**
+ * Archivo: ejercicios.php
+ * Descripción: Gestión y listado de ejercicios individuales disponibles para armar rutinas.
+ * Parte del sistema integral de gestión Sayagym.
+ */
+
 include 'config.php';
 if (!esAdministrador()) {
   header("Location: login.php");

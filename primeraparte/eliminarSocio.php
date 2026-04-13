@@ -1,4 +1,10 @@
 <?php
+/**
+ * Archivo: eliminarSocio.php
+ * Descripción: Script para gestionar la desactivación o eliminación de socios.
+ * Parte del sistema integral de gestión Sayagym.
+ */
+
 // Incluimos la configuración para conectar a la base de datos
 include 'config.php';
 if (!esAdministrador()) {

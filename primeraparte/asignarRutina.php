@@ -1,4 +1,10 @@
 <?php
+/**
+ * Archivo: asignarRutina.php
+ * Descripción: Asignación de rutinas de entrenamiento a los socios del gimnasio.
+ * Parte del sistema integral de gestión Sayagym.
+ */
+
 include 'config.php';
 if (!esAdministrador()) {
   header("Location: login.php");

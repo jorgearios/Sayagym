@@ -1,4 +1,10 @@
 <?php
+/**
+ * Archivo: eliminarRutina.php
+ * Descripción: Script para gestionar la eliminación de rutinas de entrenamiento.
+ * Parte del sistema integral de gestión Sayagym.
+ */
+
 include 'config.php';
 if (!esAdministrador()) {
     header("Location: login.php");

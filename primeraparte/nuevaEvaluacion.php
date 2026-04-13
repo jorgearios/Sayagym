@@ -1,4 +1,10 @@
 <?php
+/**
+ * Archivo: nuevaEvaluacion.php
+ * Descripción: Formulario para registrar una nueva evaluación física (peso, IMC, medidas).
+ * Parte del sistema integral de gestión Sayagym.
+ */
+
 include 'config.php';
 if (!esAdministrador()) {
   header("Location: login.php");

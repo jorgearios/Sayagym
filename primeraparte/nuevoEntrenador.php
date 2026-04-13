@@ -1,4 +1,10 @@
 <?php
+/**
+ * Archivo: nuevoEntrenador.php
+ * Descripción: Formulario de registro para la contratación de un nuevo entrenador.
+ * Parte del sistema integral de gestión Sayagym.
+ */
+
 
 // 1. Incluimos el documento vital que nos permite leer o escribir datos en el sistema (nuestra conexión MySQL)
 include 'config.php';

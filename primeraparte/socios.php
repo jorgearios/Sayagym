@@ -1,4 +1,10 @@
 <?php
+/**
+ * Archivo: socios.php
+ * Descripción: Administración principal del directorio de socios (altas, bajas, estado).
+ * Parte del sistema integral de gestión Sayagym.
+ */
+
 // Incluimos nuestro archivo de configuración para poder interactuar con la base de datos
 include 'config.php';
 
