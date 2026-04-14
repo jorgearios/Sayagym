@@ -101,8 +101,8 @@ if ($existe_tabla) {
 function ic($cond)
 {
     return $cond
-        ? "<span style='color:#15803d;font-weight:700'>✅ SÍ</span>"
-        : "<span style='color:#dc2626;font-weight:700'>❌ NO</span>";
+        ? "<span style='color:#15803d;font-weight:700'> SÍ</span>"
+        : "<span style='color:#dc2626;font-weight:700'> NO</span>";
 }
 ?>
 <!doctype html>
@@ -258,7 +258,7 @@ function ic($cond)
 
         <?php if ($accion === "SUCCESS"): ?>
             <div class="banner ok">
-                ✅ <strong>¡Listo! Admin creado y verificado correctamente.</strong><br>
+                <strong>¡Listo! Admin creado y verificado correctamente.</strong><br>
                 Entra con: <strong>admin</strong> / <strong>admin123</strong>
             </div>
             <a href="login.php" class="go">→ Ir al Login ahora</a>
@@ -280,8 +280,8 @@ function ic($cond)
             <?php if ($admin_existe): ?>
                 <div class="row"><span class="lbl">Estado del admin</span>
                     <span><?php echo $admin_row['estado'] === 'activo'
-                        ? "<span style='color:#15803d;font-weight:700'>activo ✅</span>"
-                        : "<span style='color:#dc2626;font-weight:700'>" . $admin_row['estado'] . " ❌</span>"; ?></span>
+                        ? "<span style='color:#15803d;font-weight:700'>activo </span>"
+                        : "<span style='color:#dc2626;font-weight:700'>" . $admin_row['estado'] . " </span>"; ?></span>
                 </div>
                 <div class="row"><span class="lbl">Rol</span><span><?php echo $admin_row['rol']; ?></span></div>
                 <div class="row"><span class="lbl">Hash en
@@ -301,18 +301,18 @@ function ic($cond)
 
                 <?php if ($verify_admin123): ?>
                     <div class="banner ok" style="margin-top:12px">
-                        ✅ El hash es correcto para "admin123". El problema es otro (cookies de sesión o login.php sin backtick
+                        El hash es correcto para "admin123". El problema es otro (cookies de sesión o login.php sin backtick
                         en `password`).
                         <br>Cierra el navegador completamente, ábrelo de nuevo y entra con <strong>admin / admin123</strong>.
                     </div>
                 <?php elseif ($verify_password): ?>
                     <div class="banner warn" style="margin-top:12px">
-                        ⚠️ El hash corresponde a la contraseña <strong>"password"</strong> (no a "admin123"). Usa el botón de
+                        El hash corresponde a la contraseña <strong>"password"</strong> (no a "admin123"). Usa el botón de
                         abajo para corregirlo.
                     </div>
                 <?php else: ?>
                     <div class="banner err" style="margin-top:12px">
-                        ❌ El hash no corresponde a ninguna contraseña conocida. Hay que recrear el admin.
+                        El hash no corresponde a ninguna contraseña conocida. Hay que recrear el admin.
                     </div>
                 <?php endif; ?>
             </div>
@@ -362,7 +362,7 @@ function ic($cond)
                 </p>
                 <form method="POST">
                     <button type="submit" name="corregir" value="1">
-                        🔑 Recrear admin → admin / admin123
+
                     </button>
                 </form>
             </div>

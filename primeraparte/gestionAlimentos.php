@@ -92,8 +92,9 @@ $categorias = $conexion->query("SELECT DISTINCT categoria FROM alimentos_caloria
     </div>
 
     <?php if (isset($_GET['res'])): ?>
-      <div class="alert alert-success">✓
-        <?php echo $_GET['res'] === 'eliminado' ? 'Alimento eliminado.' : 'Alimento guardado correctamente.'; ?></div>
+      <div class="alert alert-success">
+        <?php echo $_GET['res'] === 'eliminado' ? 'Alimento eliminado.' : 'Alimento guardado correctamente.'; ?>
+      </div>
     <?php endif; ?>
     <?php if (isset($msg))
       echo $msg; ?>

@@ -81,8 +81,8 @@ $planes = $conexion->query("SELECT m.*, (SELECT COUNT(*) FROM socios s WHERE s.i
     <?php if (isset($_GET['res'])): ?>
       <div class="alert <?php echo $_GET['res'] === 'eliminado' ? 'alert-danger' : 'alert-success'; ?>">
         <?php
-        $msgs = ['creado' => '✓ Plan creado correctamente.', 'actualizado' => '✓ Plan actualizado.', 'eliminado' => '✓ Plan eliminado.'];
-        echo $msgs[$_GET['res']] ?? '✓ Operación realizada.';
+        $msgs = ['creado' => 'Plan creado correctamente.', 'actualizado' => 'Plan actualizado.', 'eliminado' => 'Plan eliminado.'];
+        echo $msgs[$_GET['res']] ?? 'Operación realizada.';
         ?>
       </div>
     <?php endif; ?>

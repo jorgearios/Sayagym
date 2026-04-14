@@ -25,7 +25,7 @@ if (isset($_GET['reset'])) {
   $nuevo_hash = password_hash('admin123', PASSWORD_DEFAULT);
   $c->query("UPDATE usuarios SET password='$nuevo_hash', estado='activo' WHERE usuario='admin'");
   echo "<div style='background:#d4edda;padding:14px;border-radius:6px;font-family:monospace;margin-bottom:12px;'>";
-  echo "✅ Contraseña reseteada. Filas afectadas: " . $c->affected_rows . "<br>";
+  echo "Contraseña reseteada. Filas afectadas: " . $c->affected_rows . "<br>";
   echo "Intenta entrar con: <b>admin / admin123</b></div>";
 }
 
@@ -35,7 +35,7 @@ if (isset($_GET['crear'])) {
   $c->query("INSERT INTO usuarios (nombre_completo, usuario, password, rol, estado)
                VALUES ('Admin Principal', 'admin', '$nuevo_hash', 'Administrador', 'activo')");
   echo "<div style='background:#d4edda;padding:14px;border-radius:6px;font-family:monospace;margin-bottom:12px;'>";
-  echo "✅ Admin creado. ID insertado: " . $c->insert_id . "<br>";
+  echo "Admin creado. ID insertado: " . $c->insert_id . "<br>";
   echo "Intenta entrar con: <b>admin / admin123</b></div>";
 }
 
@@ -141,7 +141,7 @@ if (isset($_GET['crear'])) {
 
   <?php if ($c->connect_error): ?>
     <div class="box">
-      <span class="err">❌ ERROR DE CONEXIÓN A LA BASE DE DATOS</span><br><br>
+      <span class="err">ERROR DE CONEXIÓN A LA BASE DE DATOS</span><br><br>
       <b>Error:</b> <?php echo $c->connect_error; ?><br><br>
       <b>Parámetros usados:</b><br>
       Host: <?php echo $host; ?><br>
@@ -164,17 +164,17 @@ if (isset($_GET['crear'])) {
       $t = $c->query("SHOW TABLES LIKE 'usuarios'");
       if ($t->num_rows === 0):
         ?>
-        <span class="err">❌ La tabla <b>usuarios</b> NO EXISTE</span><br><br>
+        <span class="err">La tabla <b>usuarios</b> NO EXISTE</span><br><br>
         Debes importar el script <code>sistema_gym_v2.sql</code> en phpMyAdmin.
       <?php else: ?>
-        <span class="ok">✓ Tabla usuarios existe</span>
+        <span class="ok">Tabla usuarios existe</span>
         <?php
         $rows = $c->query("SELECT id_usuario, nombre_completo, usuario, rol, estado, LEFT(password,30) as hash_inicio FROM usuarios");
         if ($rows->num_rows === 0):
           ?>
           <br><br>
-          <span class="err">❌ La tabla está VACÍA — no hay ningún usuario</span><br><br>
-          <a href="?crear=1" class="btn btn-green">✚ Crear admin ahora (admin/admin123)</a>
+          <span class="err">La tabla está VACÍA — no hay ningún usuario</span><br><br>
+          <a href="?crear=1" class="btn btn-green"> Crear admin ahora (admin/admin123)</a>
         <?php else: ?>
           <br><br>
           <b>Usuarios registrados (<?php echo $rows->num_rows; ?>):</b>
@@ -221,15 +221,15 @@ if (isset($_GET['crear'])) {
         $verify = password_verify('admin123', $row_admin['password']);
         ?>
         <?php if ($verify): ?>
-          <span class="ok">✅ password_verify('admin123', hash_en_bd) = TRUE — la contraseña es correcta</span>
+          <span class="ok">password_verify('admin123', hash_en_bd) = TRUE — la contraseña es correcta</span>
           <br><br>
           <?php if ($row_admin['estado'] !== 'activo'): ?>
-            <span class="err">❌ Pero el estado del usuario es: <b><?php echo $row_admin['estado']; ?></b> — debe ser
+            <span class="err">Pero el estado del usuario es: <b><?php echo $row_admin['estado']; ?></b> — debe ser
               'activo'</span><br>
             <a href="?reset=1" class="btn">Activar y resetear contraseña</a>
           <?php else: ?>
-            <span class="ok">✓ Estado: activo</span><br><br>
-            <b>✅ El login debería funcionar.</b> El problema puede ser de sesiones o de cookies. Intenta:
+            <span class="ok">Estado: activo</span><br><br>
+            <b>El login debería funcionar.</b> El problema puede ser de sesiones o de cookies. Intenta:
             <ol style="margin-top:8px;font-family:sans-serif;font-size:0.9rem;line-height:2;">
               <li>Borrar cookies del navegador</li>
               <li>Abrir en modo incógnito</li>
@@ -237,11 +237,11 @@ if (isset($_GET['crear'])) {
             </ol>
           <?php endif; ?>
         <?php else: ?>
-          <span class="err">❌ password_verify('admin123', hash_en_bd) = FALSE — el hash en la BD no corresponde a
+          <span class="err">password_verify('admin123', hash_en_bd) = FALSE — el hash en la BD no corresponde a
             'admin123'</span>
           <br><br>
           Hash actual en BD: <code><?php echo htmlspecialchars(substr($row_admin['password'], 0, 60)); ?>...</code><br><br>
-          <a href="?reset=1" class="btn">🔑 Resetear a admin/admin123 ahora</a>
+          <a href="?reset=1" class="btn">Resetear a admin/admin123 ahora</a>
         <?php endif; ?>
       <?php endif; ?>
     </div>
@@ -253,10 +253,10 @@ if (isset($_GET['crear'])) {
       $stmt = $c->prepare("SELECT id_usuario, nombre_completo, password, rol FROM usuarios WHERE usuario = ? AND estado = 'activo'");
       if (!$stmt):
         ?>
-        <span class="err">❌ prepare() falló: <?php echo $c->error; ?></span><br>
+        <span class="err">prepare() falló: <?php echo $c->error; ?></span><br>
         Esto significa que login.php tampoco puede ejecutar la consulta.
       <?php else: ?>
-        <span class="ok">✓ prepare() funciona correctamente</span>
+        <span class="ok">prepare() funciona correctamente</span>
         <?php
         $u = 'admin';
         $stmt->bind_param("s", $u);
@@ -266,10 +266,10 @@ if (isset($_GET['crear'])) {
         if (!$found):
           ?>
           <br><br>
-          <span class="err">❌ La consulta no devuelve filas para usuario='admin' con estado='activo'</span>
+          <span class="err">La consulta no devuelve filas para usuario='admin' con estado='activo'</span>
         <?php else: ?>
           <br><br>
-          <span class="ok">✓ Consulta devuelve el usuario: <b><?php echo htmlspecialchars($found['nombre_completo']); ?></b>
+          <span class="ok">Consulta devuelve el usuario: <b><?php echo htmlspecialchars($found['nombre_completo']); ?></b>
             (rol: <?php echo $found['rol']; ?>)</span>
         <?php endif; ?>
       <?php endif; ?>
@@ -301,9 +301,9 @@ if (isset($_GET['crear'])) {
     <!-- Acciones de emergencia -->
     <div class="box">
       <h2>Acciones de emergencia</h2>
-      <a href="?reset=1" class="btn">🔑 Resetear contraseña admin → admin123</a>
-      <a href="?crear=1" class="btn btn-blue">✚ Crear admin nuevo</a>
-      <a href="login.php" class="btn btn-green">→ Ir al Login</a>
+      <a href="?reset=1" class="btn">Resetear contraseña admin → admin123</a>
+      <a href="?crear=1" class="btn btn-blue">Crear admin nuevo</a>
+      <a href="login.php" class="btn btn-green"> Ir al Login</a>
     </div>
 
   <?php endif; ?>
