@@ -154,7 +154,7 @@ if (isset($_GET['crear'])) {
     <!-- PASO 1: Conexión -->
     <div class="box">
       <h2>1. Conexión a la base de datos</h2>
-      <span class="ok">✓ Conexión exitosa a <b><?php echo $db; ?></b> en <b><?php echo $host; ?></b></span>
+      <span class="ok"> Conexión exitosa a <b><?php echo $db; ?></b> en <b><?php echo $host; ?></b></span>
     </div>
 
     <!-- PASO 2: Tabla usuarios -->
@@ -215,8 +215,8 @@ if (isset($_GET['crear'])) {
       $row_admin = $c->query("SELECT password, estado FROM usuarios WHERE usuario='admin' LIMIT 1")->fetch_assoc();
       if (!$row_admin):
         ?>
-        <span class="err">❌ Usuario <b>admin</b> no encontrado</span><br><br>
-        <a href="?crear=1" class="btn btn-green">✚ Crear admin (admin/admin123)</a>
+        <span class="err">Usuario <b>admin</b> no encontrado</span><br><br>
+        <a href="?crear=1" class="btn btn-green">Crear admin (admin/admin123)</a>
       <?php else:
         $verify = password_verify('admin123', $row_admin['password']);
         ?>
