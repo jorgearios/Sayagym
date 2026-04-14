@@ -120,7 +120,7 @@
             opacity: 0.7;
             transition: transform 0.2s;
         }
-        .nav-item-drop:hover .drop-arrow {
+        .nav-item-drop.show .drop-arrow {
             transform: rotate(180deg);
         }
 
@@ -150,7 +150,7 @@
         }
         .dropdown-menu a i { color: var(--red); font-size: 0.95rem; }
         .dropdown-menu a:hover { background: #FEF2F2; color: var(--red); }
-        .nav-item-drop:hover .dropdown-menu { display: block; }
+        .nav-item-drop.show .dropdown-menu { display: block; }
 
         /* User badge */
         .gym-user-badge {
@@ -614,3 +614,39 @@
 
     </div>
 </nav>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const dropdowns = document.querySelectorAll('.nav-item-drop');
+    
+    dropdowns.forEach(dropdown => {
+        const toggleMenu = dropdown.querySelector('.nav-link-drop.has-drop');
+        const toggleUser = dropdown.querySelector('.gym-user-badge');
+        const toggle = toggleMenu || toggleUser;
+        
+        if (toggle) {
+            toggle.addEventListener('click', function(e) {
+                if (toggle.tagName === 'A') {
+                    e.preventDefault();
+                }
+                const isOpen = dropdown.classList.contains('show');
+                
+                // Close all dropdowns
+                dropdowns.forEach(d => d.classList.remove('show'));
+                
+                // Open clicked one if it was closed
+                if (!isOpen) {
+                    dropdown.classList.add('show');
+                }
+            });
+        }
+    });
+
+    // Close when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.nav-item-drop')) {
+            dropdowns.forEach(d => d.classList.remove('show'));
+        }
+    });
+});
+</script>
