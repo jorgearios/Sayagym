@@ -14,9 +14,14 @@ $error = "";
 
 $error = "";
 
-// Ya hay sesión → redirigir automáticamente dependiendo del rol
 if (isset($_SESSION['usuario_id'])) {
-    header("Location: " . ($_SESSION['rol'] === 'Administrador' ? "index.php" : "inicioSocio.php"));
+    if ($_SESSION['rol'] === 'Administrador') {
+        header("Location: index.php");
+    } elseif ($_SESSION['rol'] === 'Entrenador') {
+        header("Location: inicioEntrenador.php");
+    } else {
+        header("Location: inicioSocio.php");
+    }
     exit();
 }
 
@@ -51,11 +56,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $ok   = ($password_raw === $hash) || password_verify($password_raw, $hash);
 
             if ($ok) {
-                // Generar variables de sesión para el admin
+                // Generar variables de sesión
                 $_SESSION['usuario_id'] = $row_admin['id_usuario'];
                 $_SESSION['nombre']     = $row_admin['nombre_completo'];
-                $_SESSION['rol']        = 'Administrador';
-                header("Location: index.php");
+                $_SESSION['rol']        = $row_admin['rol'];
+                
+                if ($_SESSION['rol'] === 'Entrenador') {
+                    header("Location: inicioEntrenador.php");
+                } else {
+                    header("Location: index.php"); // Administrador / Recepcionista
+                }
                 exit();
             } else {
                 $error = "Contraseña incorrecta.";

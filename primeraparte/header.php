@@ -865,12 +865,6 @@
 
             <!-- Nav Items -->
             <ul class="gym-nav">
-                <li class="nav-item-drop">
-                    <a href="index.php" class="nav-link-drop">
-                        <i class="ti ti-layout-dashboard"></i>
-                        Inicio
-                    </a>
-                </li>
                 <?php
                 /**
                  * Archivo: header.php
@@ -878,6 +872,12 @@
                  * Parte del sistema integral de gestión Sayagym.
                  */
                 if (esAdministrador()): ?>
+                    <li class="nav-item-drop">
+                        <a href="index.php" class="nav-link-drop">
+                            <i class="ti ti-layout-dashboard"></i>
+                            Inicio
+                        </a>
+                    </li>
                     <li class="nav-item-drop">
                         <a href="#" class="nav-link-drop has-drop">
                             <i class="ti ti-users"></i>
@@ -888,6 +888,18 @@
                             <a href="socios.php"><i class="ti ti-user"></i> Socios</a>
                             <a href="entrenadores.php"><i class="ti ti-barbell"></i> Entrenadores</a>
                             <a href="membresias.php"><i class="ti ti-calendar-event"></i> Membresías</a>
+                        </div>
+                    </li>
+                    
+                    <li class="nav-item-drop">
+                        <a href="#" class="nav-link-drop has-drop">
+                            <i class="ti ti-activity"></i>
+                            Entrenamiento
+                            <i class="ti ti-chevron-down drop-arrow"></i>
+                        </a>
+                        <div class="dropdown-menu">
+                            <a href="rutinas.php"><i class="ti ti-clipboard-list"></i> Rutinas y Planes</a>
+                            <a href="evaluaciones.php"><i class="ti ti-report-medical"></i> Evaluaciones</a>
                         </div>
                     </li>
 
@@ -916,6 +928,49 @@
                         <a href="reportes.php" class="nav-link-drop">
                             <i class="ti ti-file-type-pdf"></i>
                             Reportes
+                        </a>
+                    </li>
+                <?php elseif (esEntrenador()): ?>
+                    <li class="nav-item-drop">
+                        <a href="inicioEntrenador.php" class="nav-link-drop">
+                            <i class="ti ti-layout-dashboard"></i>
+                            Inicio
+                        </a>
+                    </li>
+                    <li class="nav-item-drop">
+                        <a href="socios.php" class="nav-link-drop">
+                            <i class="ti ti-users"></i>
+                            Mis Socios
+                        </a>
+                    </li>
+                    <li class="nav-item-drop">
+                        <a href="#" class="nav-link-drop has-drop">
+                            <i class="ti ti-activity"></i>
+                            Entrenamiento
+                            <i class="ti ti-chevron-down drop-arrow"></i>
+                        </a>
+                        <div class="dropdown-menu">
+                            <a href="rutinas.php"><i class="ti ti-clipboard-list"></i> Rutinas y Planes</a>
+                            <a href="evaluaciones.php"><i class="ti ti-report-medical"></i> Evaluaciones</a>
+                        </div>
+                    </li>
+                <?php elseif (esSocio()): ?>
+                    <li class="nav-item-drop">
+                        <a href="inicioSocio.php" class="nav-link-drop">
+                            <i class="ti ti-layout-dashboard"></i>
+                            Mi Tablero
+                        </a>
+                    </li>
+                    <li class="nav-item-drop">
+                        <a href="inicioSocio.php#rutinas" class="nav-link-drop">
+                            <i class="ti ti-clipboard-list"></i>
+                            Mis Rutinas
+                        </a>
+                    </li>
+                    <li class="nav-item-drop">
+                        <a href="miNutricion.php" class="nav-link-drop">
+                            <i class="ti ti-apple"></i>
+                            Mi Nutrición
                         </a>
                     </li>
                 <?php endif; ?>

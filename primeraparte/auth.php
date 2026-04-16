@@ -24,10 +24,12 @@ if (!isset($_SESSION['usuario_id']) && !in_array($pagina_actual, $paginas_public
 
 // ── REDIRECCIÓN DE USUARIOS AUTENTICADOS ──
 // Si el usuario ya inició sesión e intenta acceder a 'login.php',
-// lo redirigimos a su panel correspondiente (Index para admin, InicioSocio para socios)
+// lo redirigimos a su panel correspondiente
 if (isset($_SESSION['usuario_id']) && $pagina_actual === 'login.php') {
     if (isset($_SESSION['rol']) && $_SESSION['rol'] === 'Administrador') {
         header("Location: index.php"); // Panel de Administración
+    } elseif (isset($_SESSION['rol']) && $_SESSION['rol'] === 'Entrenador') {
+        header("Location: inicioEntrenador.php"); // Panel de Entrenador
     } else {
         header("Location: inicioSocio.php"); // Panel exclusivo de Socios
     }
@@ -53,5 +55,14 @@ function esAdministrador()
 function esSocio()
 {
     return isset($_SESSION['rol']) && $_SESSION['rol'] === 'Socio';
+}
+
+/**
+ * Verifica si el usuario actual tiene el rol de Entrenador.
+ * @return bool True si es Entrenador, False de lo contrario.
+ */
+function esEntrenador()
+{
+    return isset($_SESSION['rol']) && $_SESSION['rol'] === 'Entrenador';
 }
 ?>
