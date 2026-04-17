@@ -72,37 +72,67 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
         } else {
-            // ── 2. Buscar en tabla de socios (Clientes del Gimnasio) ──────────────────────────
-            // Si no era admin, verificamos si es un socio usando su correo
-            $stmt2 = $conexion->prepare(
-                "SELECT id_socio, nombre, apellido, `password`
-                 FROM `socios`
-                 WHERE correo = ? AND estado != 'inactivo'
+            // ── 2. Buscar en tabla de entrenadores ───────────────────────────────────
+            $stmt_ent = $conexion->prepare(
+                "SELECT id_entrenador, nombre, correo, `password`, login_habilitado
+                 FROM `entrenadores`
+                 WHERE correo = ? AND estado = 'activo' AND login_habilitado = 1
                  LIMIT 1"
             );
-            $row_socio = null;
-            if ($stmt2) {
-                $stmt2->bind_param("s", $identificador);
-                $stmt2->execute();
-                $row_socio = $stmt2->get_result()->fetch_assoc();
-                $stmt2->close();
+            $row_ent = null;
+            if ($stmt_ent) {
+                $stmt_ent->bind_param("s", $identificador);
+                $stmt_ent->execute();
+                $row_ent = $stmt_ent->get_result()->fetch_assoc();
+                $stmt_ent->close();
             }
 
-            if ($row_socio) {
-                $hash = $row_socio['password'];
+            if ($row_ent) {
+                $hash = $row_ent['password'];
                 $ok   = ($password_raw === $hash) || password_verify($password_raw, $hash);
 
                 if ($ok) {
-                    $_SESSION['usuario_id'] = $row_socio['id_socio'];
-                    $_SESSION['nombre']     = $row_socio['nombre'] . ' ' . $row_socio['apellido'];
-                    $_SESSION['rol']        = 'Socio';
-                    header("Location: inicioSocio.php");
+                    $_SESSION['usuario_id'] = $row_ent['id_entrenador'];
+                    $_SESSION['nombre']     = $row_ent['nombre'];
+                    $_SESSION['rol']        = 'Entrenador';
+                    header("Location: inicioEntrenador.php");
                     exit();
                 } else {
                     $error = "Contraseña incorrecta.";
                 }
             } else {
-                $error = "Usuario o correo no encontrado, o cuenta inactiva.";
+                // ── 3. Buscar en tabla de socios (Clientes del Gimnasio) ──────────────────────────
+                // Si no era admin ni entrenador, verificamos si es un socio usando su correo
+                $stmt2 = $conexion->prepare(
+                    "SELECT id_socio, nombre, apellido, `password`
+                     FROM `socios`
+                     WHERE correo = ? AND estado != 'inactivo'
+                     LIMIT 1"
+                );
+                $row_socio = null;
+                if ($stmt2) {
+                    $stmt2->bind_param("s", $identificador);
+                    $stmt2->execute();
+                    $row_socio = $stmt2->get_result()->fetch_assoc();
+                    $stmt2->close();
+                }
+
+                if ($row_socio) {
+                    $hash = $row_socio['password'];
+                    $ok   = ($password_raw === $hash) || password_verify($password_raw, $hash);
+
+                    if ($ok) {
+                        $_SESSION['usuario_id'] = $row_socio['id_socio'];
+                        $_SESSION['nombre']     = $row_socio['nombre'] . ' ' . $row_socio['apellido'];
+                        $_SESSION['rol']        = 'Socio';
+                        header("Location: inicioSocio.php");
+                        exit();
+                    } else {
+                        $error = "Contraseña incorrecta.";
+                    }
+                } else {
+                    $error = "Usuario o correo no encontrado, o cuenta inactiva.";
+                }
             }
         }
     }

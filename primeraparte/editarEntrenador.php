@@ -57,12 +57,26 @@ if ($_POST) {
   $com = (float) $_POST['tarifa_comision'];
   $tur = $conexion->real_escape_string($_POST['turno']);
   $est = $conexion->real_escape_string($_POST['estado']);
+  $hab = isset($_POST['login_habilitado']) ? 1 : 0;
+  $pass_post = $_POST['password'] ?? '';
 
   // Ensamblaremos una gigante estructura SQL de reconstrucción general masiva; la técnica se apoda "UPDATE", de esta manera apuntando al $id_ent sustituido
   $sql = "UPDATE entrenadores SET 
             nombre = '$nom', especialidad = '$esp', telefono = '$tel', 
-            correo = '$cor', tarifa_comision = '$com', turno = '$tur', estado = '$est'
-            WHERE id_entrenador = $id_ent";
+            correo = '$cor', tarifa_comision = '$com', turno = '$tur', estado = '$est',
+            login_habilitado = $hab";
+  
+  // Si se envió una contraseña nueva, la encriptamos y la agregamos al UPDATE
+  if (!empty($pass_post)) {
+      $pass_hash = password_hash($pass_post, PASSWORD_DEFAULT);
+      $sql = "UPDATE entrenadores SET 
+                nombre = '$nom', especialidad = '$esp', telefono = '$tel', 
+                correo = '$cor', tarifa_comision = '$com', turno = '$tur', estado = '$est',
+                login_habilitado = $hab, password = '$pass_hash'
+                WHERE id_entrenador = $id_ent";
+  } else {
+      $sql .= " WHERE id_entrenador = $id_ent";
+  }
 
   // Mandamos el comando decisivo  y aguardemos la validación o rechazo 
   if ($conexion->query($sql)) {
@@ -158,6 +172,26 @@ if ($_POST) {
                 echo 'selected'; ?>>Inactivo o Baja (Renuncia
                 / Despedido / Permiso sin goce de horas laboradas)</option>
             </select>
+          </div>
+
+          <!-- SECCIÓN DE ACCESO AL SISTEMA -->
+          <div style="grid-column: 1 / -1; margin-top: 10px; padding: 15px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px;">
+            <h4 style="margin-bottom: 12px; color: #4A148C;"><i class="ti ti-lock me-1"></i>Acceso al Sistema</h4>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+              <div>
+                <label class="form-label">Nueva Contraseña (dejar en blanco para no cambiar)</label>
+                <input type="password" name="password" class="form-control" placeholder="••••••••">
+              </div>
+              <div style="display: flex; align-items: center; padding-top: 25px;">
+                <label class="form-check form-switch" style="cursor: pointer;">
+                  <input class="form-check-input" type="checkbox" name="login_habilitado" <?php echo ($e['login_habilitado'] == 1) ? 'checked' : ''; ?>>
+                  <span class="form-check-label">Habilitar acceso al panel de entrenador</span>
+                </label>
+              </div>
+            </div>
+            <p style="font-size: .75rem; color: #64748b; margin-top: 8px; margin-bottom: 0;">
+              <i class="ti ti-info-circle me-1"></i>El entrenador usará su <strong>correo electrónico</strong> y esta contraseña para iniciar sesión.
+            </p>
           </div>
 
         </div>

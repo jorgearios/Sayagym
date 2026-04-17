@@ -71,19 +71,19 @@ $total_hoy    = $conexion->query("SELECT COUNT(*) as n FROM asistencia WHERE fec
 $dentro_ahora = $conexion->query("SELECT COUNT(*) as n FROM asistencia WHERE fecha='$hoy' AND hora_salida IS NULL")->fetch_assoc()['n'];
 $ya_salieron  = $total_hoy - $dentro_ahora;
 
-// ── REGISTROS DEL DÍA ────────────────────────────────────
+// ── REGISTROS RECIENTES (Últimos 50) ────────────────────────────────────
 $registros = $conexion->query("
     SELECT a.*, s.nombre, s.apellido, s.foto
     FROM asistencia a
     JOIN socios s ON a.id_socio = s.id_socio
-    WHERE a.fecha = '$hoy'
-    ORDER BY a.id_asistencia DESC
+    ORDER BY a.fecha DESC, a.hora_entrada DESC
+    LIMIT 50
 ");
 
-// ── SOCIOS ACTIVOS PARA EL SELECT ────────────────────────
+// ── SOCIOS ACTIVOS PARA EL SELECT (Incluyendo ID en el nombre para búsqueda) ────────────────────────
 $socios_activos = $conexion->query(
     "SELECT id_socio, nombre, apellido FROM socios
-     WHERE estado='activo' AND (fecha_vencimiento IS NULL OR fecha_vencimiento >= '$hoy')
+     WHERE estado='activo'
      ORDER BY nombre ASC"
 );
 ?>
@@ -129,15 +129,15 @@ $socios_activos = $conexion->query(
 
       <!-- TABLA -->
       <div class="card">
-        <div class="card-header gray"><h3 class="card-title">Movimientos de Hoy</h3></div>
+        <div class="card-header gray"><h3 class="card-title">Historial Reciente de Accesos</h3></div>
         <div class="table-responsive">
           <table class="gym-table">
             <thead>
-              <tr><th>Socio</th><th>Entrada</th><th>Salida</th><th>Medio</th><th>Estado</th><th>Acción</th></tr>
+              <tr><th>Socio</th><th>Fecha</th><th>Entrada</th><th>Salida</th><th>Medio</th><th>Estado</th><th>Acción</th></tr>
             </thead>
             <tbody>
               <?php if ($registros->num_rows === 0): ?>
-              <tr><td colspan="6" style="text-align:center;padding:30px;color:var(--muted);">Sin movimientos hoy.</td></tr>
+              <tr><td colspan="7" style="text-align:center;padding:30px;color:var(--muted);">Sin movimientos registrados.</td></tr>
               <?php endif; ?>
               <?php while ($r = $registros->fetch_assoc()): ?>
               <tr>
@@ -151,18 +151,21 @@ $socios_activos = $conexion->query(
                     <span class="td-name"><?php echo htmlspecialchars($r['nombre'].' '.$r['apellido']); ?></span>
                   </div>
                 </td>
+                <td class="td-muted"><?php echo date('d/m/Y', strtotime($r['fecha'])); ?></td>
                 <td class="fw-bold text-green"><?php echo $r['hora_entrada'] ? substr($r['hora_entrada'],0,5) : '—'; ?></td>
                 <td class="td-muted"><?php echo $r['hora_salida'] ? substr($r['hora_salida'],0,5) : '—'; ?></td>
                 <td><span class="badge badge-blue" style="font-size:.7rem;"><?php echo htmlspecialchars($r['medio'] ?? 'Manual'); ?></span></td>
                 <td>
-                  <?php if (!$r['hora_salida']): ?>
+                  <?php if (!$r['hora_salida'] && $r['fecha'] == $hoy): ?>
                   <span class="badge badge-green">Dentro</span>
+                  <?php elseif (!$r['hora_salida']): ?>
+                  <span class="badge badge-red">Sin Salida</span>
                   <?php else: ?>
                   <span class="badge badge-gray">Salió</span>
                   <?php endif; ?>
                 </td>
                 <td>
-                  <?php if (!$r['hora_salida']): ?>
+                  <?php if (!$r['hora_salida'] && $r['fecha'] == $hoy): ?>
                   <a href="acceso.php?salida=<?php echo $r['id_asistencia']; ?>" class="btn btn-icon" title="Registrar salida"
                      onclick="return confirm('¿Registrar salida ahora?');"><i class="ti ti-logout"></i></a>
                   <?php else: ?>

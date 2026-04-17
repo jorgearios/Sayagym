@@ -911,6 +911,13 @@
                     </li>
 
                     <li class="nav-item-drop">
+                        <a href="acceso.php" class="nav-link-drop">
+                            <i class="ti ti-door-enter"></i>
+                            Control de Acceso
+                        </a>
+                    </li>
+
+                    <li class="nav-item-drop">
                         <a href="#" class="nav-link-drop has-drop">
                             <i class="ti ti-shopping-cart"></i>
                             Tienda
